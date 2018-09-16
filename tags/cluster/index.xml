@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Matias Pan</title>
-    <link>http://matiaspan.me/</link>
-    <description>Recent content on Matias Pan</description>
+    <title>Cluster on Matias Pan</title>
+    <link>http://matiaspan.me/tags/cluster/</link>
+    <description>Recent content in Cluster on Matias Pan</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 16 Sep 2018 17:57:48 -0300</lastBuildDate>
     
-	<atom:link href="http://matiaspan.me/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://matiaspan.me/tags/cluster/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
