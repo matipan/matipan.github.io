@@ -3,53 +3,53 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://matiaspan.me/posts/deploying-gogs-to-a-custom-kubernetes-cluster/</loc>
+    <loc>//matiaspan.me/posts/deploying-gogs-to-a-custom-kubernetes-cluster/</loc>
     <lastmod>2018-09-16T17:57:48-03:00</lastmod>
   </url>
   
   <url>
-    <loc>http://matiaspan.me/categories/</loc>
+    <loc>//matiaspan.me/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://matiaspan.me/tags/cluster/</loc>
-    <lastmod>2018-09-16T17:57:48-03:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://matiaspan.me/tags/gogs/</loc>
+    <loc>//matiaspan.me/tags/cluster/</loc>
     <lastmod>2018-09-16T17:57:48-03:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://matiaspan.me/tags/kubernetes/</loc>
+    <loc>//matiaspan.me/tags/gogs/</loc>
     <lastmod>2018-09-16T17:57:48-03:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://matiaspan.me/categories/kubernetes/</loc>
+    <loc>//matiaspan.me/tags/kubernetes/</loc>
     <lastmod>2018-09-16T17:57:48-03:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://matiaspan.me/</loc>
+    <loc>//matiaspan.me/categories/kubernetes/</loc>
     <lastmod>2018-09-16T17:57:48-03:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://matiaspan.me/posts/</loc>
+    <loc>//matiaspan.me/</loc>
     <lastmod>2018-09-16T17:57:48-03:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://matiaspan.me/tags/</loc>
+    <loc>//matiaspan.me/posts/</loc>
+    <lastmod>2018-09-16T17:57:48-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>//matiaspan.me/tags/</loc>
     <lastmod>2018-09-16T17:57:48-03:00</lastmod>
     <priority>0</priority>
   </url>
