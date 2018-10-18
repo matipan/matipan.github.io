@@ -120,84 +120,84 @@ Now you are ready to hit create and wait since it takes a while for all droplets
 
 <p>Thats it!! You just created a 3 node kubernetes cluster, it really was no more than a few clicks!<br />
 We are almost done with the cluster setup. Now you need to configure your local <code>kubectl</code> installation to point to the recently created cluster(if have not installed <code>kubectl</code> yet follow <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">this tutorial</a>). In the StackPoint cluster page previously showed you&rsquo;ll see a link on the left that says <code>kubeconf</code>, download that file and copy its contents to <code>~/.kube/config</code>. To check if it was properly configured run <code>kubectl cluster-info</code> and the output should look similar to this:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Kubernetes master is running at https://&lt;MASTER IP&gt;:&lt;MASTER PORT&gt;
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Kubernetes master is running at https://&lt;MASTER IP&gt;:&lt;MASTER PORT&gt;
 Heapster is running at https://&lt;MASTER IP&gt;:&lt;MASTER PORT&gt;/api/v1/namespaces/kube-system/services/heapster/proxy
 KubeDNS is running at https://&lt;MASTER IP&gt;:&lt;MASTER PORT&gt;/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
 
-To further debug and diagnose cluster problems, use <span style="color:#0ff;font-weight:bold">&#39;kubectl cluster-info dump&#39;</span>.</code></pre></div>
+To further debug and diagnose cluster problems, use <span style="color:#ed9d13">&#39;kubectl cluster-info dump&#39;</span>.</code></pre></div>
 <h3 id="installing-gogs">Installing Gogs</h3>
 
 <p><a href="https://gogs.io">Gogs</a> is a lightweight git server that can deployed very easily since it does not have many dependencies and features like Gitlab CE.<br />
 To install Gogs on our cluster we are going to be using <a href="https://helm.sh/">Helm</a> so if you don&rsquo;t already have it installed and configured follow <a href="https://docs.helm.sh/using_helm/">this tutorial</a>. After that you need to add the <code>incubator</code> repo since that is where the gogs chart lives:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shel" data-lang="shel">helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/</code></pre></div>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shel" data-lang="shel">helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/</code></pre></div>
 <p>Since we are going to change a lot of the default values that come with the <code>gogs</code> chart you need to clone the charts repository:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git clone https://github.com/helm/charts.git</code></pre></div>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">git clone https://github.com/helm/charts.git</code></pre></div>
 <p>Inside the <code>charts</code> repo you will have the folder <code>incubator</code> that holds the <code>gogs</code> chart. In there you&rsquo;ll find the <code>values.yml</code> file that is used when installing gogs, this file would be good for local installations but since we are installing this on a cloud provider we are going to have to change a few things.<br />
 This is the resulting <code>values.yml</code>, below I&rsquo;ll explain what I have changed and which properties you need to configure:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml">serviceType: LoadBalancer
-replicaCount: <span style="color:#ff0;font-weight:bold">2</span>
-image:
-  repository: gogs/gogs
-  tag: <span style="color:#ff0;font-weight:bold">0.11</span>.<span style="color:#ff0;font-weight:bold">29</span>
-  pullPolicy: IfNotPresent
-service:
-  httpPort: <span style="color:#ff0;font-weight:bold">80</span>
-  sshPort: <span style="color:#ff0;font-weight:bold">22</span>
-  sshDomain: CHANGEME
-  gogs:
-    appName: <span style="color:#0ff;font-weight:bold">&#39;Some name&#39;</span>
-    runMode: <span style="color:#0ff;font-weight:bold">&#39;prod&#39;</span>
-    forcePrivate: <span style="color:#fff;font-weight:bold">true</span>
-    disableHttpGit: <span style="color:#fff;font-weight:bold">false</span>
-    repositoryUploadEnabled: <span style="color:#fff;font-weight:bold">true</span>
-    repositoryUploadAllowedTypes:
-    repositoryUploadMaxFileSize: <span style="color:#ff0;font-weight:bold">50</span>
-    repositoryUploadMaxFiles: <span style="color:#ff0;font-weight:bold">5</span>
-    serviceEnableCaptcha: <span style="color:#fff;font-weight:bold">false</span>
-    serviceRegisterEmailConfirm: <span style="color:#fff;font-weight:bold">false</span>
-    serviceDisableRegistration: <span style="color:#fff;font-weight:bold">false</span>
-    serviceRequireSignInView: <span style="color:#fff;font-weight:bold">true</span>
-    serviceEnableNotifyMail: <span style="color:#fff;font-weight:bold">false</span>
-    cacheAdapter: memory
-    cacheInterval: <span style="color:#ff0;font-weight:bold">60</span>
-    cacheHost:
-    serverDomain: CHANGEME
-    serverRootUrl: http://CHANGEME
-    serverLandingPage: home
-    databaseType: postgres
-    databaseHost:
-    databaseUser:
-    databasePassword:
-    databaseName:
-    webhookQueueLength: <span style="color:#ff0;font-weight:bold">1000</span>
-    webhookDeliverTimeout: <span style="color:#ff0;font-weight:bold">5</span>
-    webhookSkipTlsVerify: <span style="color:#fff;font-weight:bold">true</span>
-    webhookPagingNum: <span style="color:#ff0;font-weight:bold">10</span>
-    logMode: console
-    logLevel: Trace
-    otherShowFooterBranding: <span style="color:#fff;font-weight:bold">false</span>
-    otherShowFooterVersion: <span style="color:#fff;font-weight:bold">true</span>
-    otherShowFooterTemplateLoadTime: <span style="color:#fff;font-weight:bold">true</span>
-    securitySecretKey: <span style="color:#0ff;font-weight:bold">&#34;changeme&#34;</span>
-    uiExplorePagingNum: <span style="color:#ff0;font-weight:bold">20</span>
-    uiIssuePagingNum: <span style="color:#ff0;font-weight:bold">10</span>
-    uiFeedMaxCommitNum: <span style="color:#ff0;font-weight:bold">5</span>
-  ingress:
-    enabled: <span style="color:#fff;font-weight:bold">false</span>
-persistence:
-  enabled: <span style="color:#fff;font-weight:bold">true</span>
-  storageClass: <span style="color:#0ff;font-weight:bold">&#34;do-block-storage&#34;</span>
-  accessMode: ReadWriteOnce
-  size: 20Gi
-postgresql:
-  install: <span style="color:#fff;font-weight:bold">true</span>
-  postgresUser: gogs
-  postgresPassword: gogs
-  postgresDatabase: gogs
-  persistence:
-    enabled: <span style="color:#fff;font-weight:bold">true</span>
-    storageClass: <span style="color:#0ff;font-weight:bold">&#34;do-block-storage&#34;</span>
-    size: 5Gi</code></pre></div>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml">serviceType:<span style="color:#666"> </span>LoadBalancer<span style="color:#666">
+</span><span style="color:#666"></span>replicaCount:<span style="color:#666"> </span><span style="color:#3677a9">2</span><span style="color:#666">
+</span><span style="color:#666"></span>image:<span style="color:#666">
+</span><span style="color:#666">  </span>repository:<span style="color:#666"> </span>gogs/gogs<span style="color:#666">
+</span><span style="color:#666">  </span>tag:<span style="color:#666"> </span><span style="color:#3677a9">0.11</span>.<span style="color:#3677a9">29</span><span style="color:#666">
+</span><span style="color:#666">  </span>pullPolicy:<span style="color:#666"> </span>IfNotPresent<span style="color:#666">
+</span><span style="color:#666"></span>service:<span style="color:#666">
+</span><span style="color:#666">  </span>httpPort:<span style="color:#666"> </span><span style="color:#3677a9">80</span><span style="color:#666">
+</span><span style="color:#666">  </span>sshPort:<span style="color:#666"> </span><span style="color:#3677a9">22</span><span style="color:#666">
+</span><span style="color:#666">  </span>sshDomain:<span style="color:#666"> </span>CHANGEME<span style="color:#666">
+</span><span style="color:#666">  </span>gogs:<span style="color:#666">
+</span><span style="color:#666">    </span>appName:<span style="color:#666"> </span><span style="color:#ed9d13">&#39;Some name&#39;</span><span style="color:#666">
+</span><span style="color:#666">    </span>runMode:<span style="color:#666"> </span><span style="color:#ed9d13">&#39;prod&#39;</span><span style="color:#666">
+</span><span style="color:#666">    </span>forcePrivate:<span style="color:#666"> </span><span style="color:#6ab825;font-weight:bold">true</span><span style="color:#666">
+</span><span style="color:#666">    </span>disableHttpGit:<span style="color:#666"> </span><span style="color:#6ab825;font-weight:bold">false</span><span style="color:#666">
+</span><span style="color:#666">    </span>repositoryUploadEnabled:<span style="color:#666"> </span><span style="color:#6ab825;font-weight:bold">true</span><span style="color:#666">
+</span><span style="color:#666">    </span>repositoryUploadAllowedTypes:<span style="color:#666">
+</span><span style="color:#666">    </span>repositoryUploadMaxFileSize:<span style="color:#666"> </span><span style="color:#3677a9">50</span><span style="color:#666">
+</span><span style="color:#666">    </span>repositoryUploadMaxFiles:<span style="color:#666"> </span><span style="color:#3677a9">5</span><span style="color:#666">
+</span><span style="color:#666">    </span>serviceEnableCaptcha:<span style="color:#666"> </span><span style="color:#6ab825;font-weight:bold">false</span><span style="color:#666">
+</span><span style="color:#666">    </span>serviceRegisterEmailConfirm:<span style="color:#666"> </span><span style="color:#6ab825;font-weight:bold">false</span><span style="color:#666">
+</span><span style="color:#666">    </span>serviceDisableRegistration:<span style="color:#666"> </span><span style="color:#6ab825;font-weight:bold">false</span><span style="color:#666">
+</span><span style="color:#666">    </span>serviceRequireSignInView:<span style="color:#666"> </span><span style="color:#6ab825;font-weight:bold">true</span><span style="color:#666">
+</span><span style="color:#666">    </span>serviceEnableNotifyMail:<span style="color:#666"> </span><span style="color:#6ab825;font-weight:bold">false</span><span style="color:#666">
+</span><span style="color:#666">    </span>cacheAdapter:<span style="color:#666"> </span>memory<span style="color:#666">
+</span><span style="color:#666">    </span>cacheInterval:<span style="color:#666"> </span><span style="color:#3677a9">60</span><span style="color:#666">
+</span><span style="color:#666">    </span>cacheHost:<span style="color:#666">
+</span><span style="color:#666">    </span>serverDomain:<span style="color:#666"> </span>CHANGEME<span style="color:#666">
+</span><span style="color:#666">    </span>serverRootUrl:<span style="color:#666"> </span>http://CHANGEME<span style="color:#666">
+</span><span style="color:#666">    </span>serverLandingPage:<span style="color:#666"> </span>home<span style="color:#666">
+</span><span style="color:#666">    </span>databaseType:<span style="color:#666"> </span>postgres<span style="color:#666">
+</span><span style="color:#666">    </span>databaseHost:<span style="color:#666">
+</span><span style="color:#666">    </span>databaseUser:<span style="color:#666">
+</span><span style="color:#666">    </span>databasePassword:<span style="color:#666">
+</span><span style="color:#666">    </span>databaseName:<span style="color:#666">
+</span><span style="color:#666">    </span>webhookQueueLength:<span style="color:#666"> </span><span style="color:#3677a9">1000</span><span style="color:#666">
+</span><span style="color:#666">    </span>webhookDeliverTimeout:<span style="color:#666"> </span><span style="color:#3677a9">5</span><span style="color:#666">
+</span><span style="color:#666">    </span>webhookSkipTlsVerify:<span style="color:#666"> </span><span style="color:#6ab825;font-weight:bold">true</span><span style="color:#666">
+</span><span style="color:#666">    </span>webhookPagingNum:<span style="color:#666"> </span><span style="color:#3677a9">10</span><span style="color:#666">
+</span><span style="color:#666">    </span>logMode:<span style="color:#666"> </span>console<span style="color:#666">
+</span><span style="color:#666">    </span>logLevel:<span style="color:#666"> </span>Trace<span style="color:#666">
+</span><span style="color:#666">    </span>otherShowFooterBranding:<span style="color:#666"> </span><span style="color:#6ab825;font-weight:bold">false</span><span style="color:#666">
+</span><span style="color:#666">    </span>otherShowFooterVersion:<span style="color:#666"> </span><span style="color:#6ab825;font-weight:bold">true</span><span style="color:#666">
+</span><span style="color:#666">    </span>otherShowFooterTemplateLoadTime:<span style="color:#666"> </span><span style="color:#6ab825;font-weight:bold">true</span><span style="color:#666">
+</span><span style="color:#666">    </span>securitySecretKey:<span style="color:#666"> </span><span style="color:#ed9d13">&#34;changeme&#34;</span><span style="color:#666">
+</span><span style="color:#666">    </span>uiExplorePagingNum:<span style="color:#666"> </span><span style="color:#3677a9">20</span><span style="color:#666">
+</span><span style="color:#666">    </span>uiIssuePagingNum:<span style="color:#666"> </span><span style="color:#3677a9">10</span><span style="color:#666">
+</span><span style="color:#666">    </span>uiFeedMaxCommitNum:<span style="color:#666"> </span><span style="color:#3677a9">5</span><span style="color:#666">
+</span><span style="color:#666">  </span>ingress:<span style="color:#666">
+</span><span style="color:#666">    </span>enabled:<span style="color:#666"> </span><span style="color:#6ab825;font-weight:bold">false</span><span style="color:#666">
+</span><span style="color:#666"></span>persistence:<span style="color:#666">
+</span><span style="color:#666">  </span>enabled:<span style="color:#666"> </span><span style="color:#6ab825;font-weight:bold">true</span><span style="color:#666">
+</span><span style="color:#666">  </span>storageClass:<span style="color:#666"> </span><span style="color:#ed9d13">&#34;do-block-storage&#34;</span><span style="color:#666">
+</span><span style="color:#666">  </span>accessMode:<span style="color:#666"> </span>ReadWriteOnce<span style="color:#666">
+</span><span style="color:#666">  </span>size:<span style="color:#666"> </span>20Gi<span style="color:#666">
+</span><span style="color:#666"></span>postgresql:<span style="color:#666">
+</span><span style="color:#666">  </span>install:<span style="color:#666"> </span><span style="color:#6ab825;font-weight:bold">true</span><span style="color:#666">
+</span><span style="color:#666">  </span>postgresUser:<span style="color:#666"> </span>gogs<span style="color:#666">
+</span><span style="color:#666">  </span>postgresPassword:<span style="color:#666"> </span>gogs<span style="color:#666">
+</span><span style="color:#666">  </span>postgresDatabase:<span style="color:#666"> </span>gogs<span style="color:#666">
+</span><span style="color:#666">  </span>persistence:<span style="color:#666">
+</span><span style="color:#666">    </span>enabled:<span style="color:#666"> </span><span style="color:#6ab825;font-weight:bold">true</span><span style="color:#666">
+</span><span style="color:#666">    </span>storageClass:<span style="color:#666"> </span><span style="color:#ed9d13">&#34;do-block-storage&#34;</span><span style="color:#666">
+</span><span style="color:#666">    </span>size:<span style="color:#666"> </span>5Gi</code></pre></div>
 <p>Ok, that&rsquo;s a big file and lots of configs. I&rsquo;m not going to go over each value and explain what it means(I don&rsquo;t even know), but lucky for you the <a href="https://github.com/helm/charts/blob/master/incubator/gogs/values.yaml">default values.yml</a> has a lot of comments that explain quite well each config.<br />
 This are the fields that were changed and the ones you need to setup:</p>
 
@@ -214,16 +214,16 @@ This are the fields that were changed and the ones you need to setup:</p>
 </ul>
 
 <p>Now that all the configurations are in place we can use <code>helm</code> to install gogs on our cluster. Inside the <code>charts</code> repo you recently cloned execute the following command:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">helm install --name gogs -f incubator/gogs/values.yaml incubator/gogs</code></pre></div>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">helm install --name gogs -f incubator/gogs/values.yaml incubator/gogs</code></pre></div>
 <p>This magic command will install and configure all the pods, services, deployments and load balancers needed to run 2 replicas of gogs.<br />
 It will take a while before gogs is able to be used, you can check the status of the installation with the following command:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">helm status gogs</code></pre></div>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">helm status gogs</code></pre></div>
 <p>In the output of the <code>helm install</code> command you will find a few commands that will also be useful for checking the status of the installation, this one will allow you to know when the IP of the LoadBalancer is ready:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl get svc --namespace {{ .Release.Namespace }} -w {{ template <span style="color:#0ff;font-weight:bold">&#34;gogs.fullname&#34;</span> . }}</code></pre></div>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl get svc --namespace {{ .Release.Namespace }} -w {{ template <span style="color:#ed9d13">&#34;gogs.fullname&#34;</span> . }}</code></pre></div>
 <p>After it is ready execute the following three commands to find out where exactly is <code>gogs</code> living:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#fff;font-weight:bold">export</span> NODE_PORT=<span style="color:#fff;font-weight:bold">$(</span>kubectl get --namespace {{ .Release.Namespace }} -o jsonpath=<span style="color:#0ff;font-weight:bold">&#34;{.spec.ports[0].nodePort}&#34;</span> services {{ template <span style="color:#0ff;font-weight:bold">&#34;gogs.fullname&#34;</span> . }}<span style="color:#fff;font-weight:bold">)</span>
-<span style="color:#fff;font-weight:bold">export</span> NODE_IP=<span style="color:#fff;font-weight:bold">$(</span>kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath=<span style="color:#0ff;font-weight:bold">&#34;{.items[0].status.addresses[0].address}&#34;</span><span style="color:#fff;font-weight:bold">)</span>
-<span style="color:#fff;font-weight:bold">echo</span> http://$NODE_IP:$NODE_PORT/</code></pre></div>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#24909d">export</span> <span style="color:#40ffff">NODE_PORT</span>=<span style="color:#6ab825;font-weight:bold">$(</span>kubectl get --namespace {{ .Release.Namespace }} -o <span style="color:#40ffff">jsonpath</span>=<span style="color:#ed9d13">&#34;{.spec.ports[0].nodePort}&#34;</span> services {{ template <span style="color:#ed9d13">&#34;gogs.fullname&#34;</span> . }}<span style="color:#6ab825;font-weight:bold">)</span>
+<span style="color:#24909d">export</span> <span style="color:#40ffff">NODE_IP</span>=<span style="color:#6ab825;font-weight:bold">$(</span>kubectl get nodes --namespace {{ .Release.Namespace }} -o <span style="color:#40ffff">jsonpath</span>=<span style="color:#ed9d13">&#34;{.items[0].status.addresses[0].address}&#34;</span><span style="color:#6ab825;font-weight:bold">)</span>
+<span style="color:#24909d">echo</span> http://<span style="color:#40ffff">$NODE_IP</span>:<span style="color:#40ffff">$NODE_PORT</span>/</code></pre></div>
 <p>The output of the last command will show you the URL for accessing <code>gogs</code>. Head over to that URL and register a user, this user will be the admin of the application.</p>
 
 <h3 id="conclusion">Conclusion</h3>
