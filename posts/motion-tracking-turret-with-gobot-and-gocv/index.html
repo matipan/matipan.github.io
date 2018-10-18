@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Matias Pan">
+    <meta name="description" content="Matias Pan&#39;s personal website">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <base href="http://matiaspan.me">
+    <title>
+  Motion tracking turret with Gobot and GoCV - Part 1 · Matias Pan
+</title>
+
+    <link rel="canonical" href="http://matiaspan.me/posts/motion-tracking-turret-with-gobot-and-gocv/">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700|Merriweather:300,700|Source+Code+Pro:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css" integrity="sha256-oSrCnRYXvHG31SBifqP2PM1uje7SJUyX0nTwO2RJV54=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="http://matiaspan.me/css/coder.min.4a8dda2d21e45ad90d61a0816771871321476edace917e4e9973e8efbe852ff6.css" integrity="sha256-So3aLSHkWtkNYaCBZ3GHEyFHbtrOkX5OmXPo776FL/Y=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="http://matiaspan.me/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="http://matiaspan.me/images/favicon-16x16.png" sizes="16x16">
+
+    
+
+    <meta name="generator" content="Hugo 0.48-DEV" />
+  </head>
+
+  <body class="">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="http://matiaspan.me">
+      Matias Pan
+    </a>
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="http://matiaspan.me/posts/">Blog</a>
+          </li>
+        
+      
+      
+    </ul>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">Motion tracking turret with Gobot and GoCV - Part 1</h1>
+        </div>
+        <div class="post-meta">
+          <span class="posted-on">
+            <i class="far fa-calendar"></i>
+            <time datetime='2018-10-18T12:44:14-03:00'>
+              October 18, 2018
+            </time>
+          </span>
+          <span class="reading-time">
+            <i class="far fa-clock"></i>
+            12 minutes read
+          </span>
+        </div>
+      </header>
+
+      <div>
+        
+
+<p>The title says it, motion tracking turret using only Go, ready to have some func?</p>
+
+<p>This blog post will be divided in three main parts: <strong>Motion detection with GoCV</strong>, <strong>Controlling servo motors with Gobot</strong> and <strong>Putting it all together</strong>. In the first part we build a lightweight motion detection algorithm that can run on low-power devices such as the RPi. In the second part we will show how to control servo motors with Gobot from the Raspberry Pi and in the last part we&rsquo;ll explain how to go from detecting an object on an image to telling exactly the angles in which the servos need to move in order to track it.</p>
+
+<p>For this blog post I assume that you already know <a href="https://golang.org">Go</a>, if you don&rsquo;t but want to learn there are lots of resources out there but a good and simple place to start is the <a href="https://tour.golang.org">Go tour</a>.</p>
+
+<p>This entire project is hosted on <a href="https://github.com/matipan/dartagnan">Github</a>.</p>
+
+<p>Before we start let me show you what you will have once you are done if you follow the entire blog post:
+<img src="http://matiaspan.me/images/fake-turret.jpg" alt="fake-turret" /></p>
+
+<p>Just kidding, this is what you will have(for real this time):
+<img src="http://matiaspan.me/images/demo.jpeg" alt="dart" /></p>
+
+<p>Looks lethal right? Lets dive in and see how we can build this sophisticated piece of machinery. Starting of with the list of things you&rsquo;ll need to follow this tutorial:</p>
+
+<ul>
+<li>Two MG90 tower pro micro servos: <a href="https://articulo.mercadolibre.com.ar/MLA-705822642-mini-servo-tower-pro-mg90-18kg-metalico-arduino-nubbeo-_JM">MercadoLibre</a> - <a href="https://www.amazon.com/Eztronics-Corp%C2%AE-Metal-Geared-Helicopter/dp/B01I17OAKY/ref=sr_1_4?ie=UTF8&amp;qid=1539878876&amp;sr=8-4&amp;keywords=mg90+servo&amp;dpID=4186kljWqwL&amp;preST=_SY300_QL70_&amp;dpSrc=srch">Amazon</a>.</li>
+<li>One Raspberry Pi 3 B+ with Raspbian installed: <a href="https://articulo.mercadolibre.com.ar/MLA-728426263-raspberry-pi-3-b-plus-rs-uk-kit-base-fuente-25a-_JM">MercadoLibre</a> - <a href="https://www.amazon.com/CanaKit-Raspberry-Starter-Premium-Black/dp/B07BCC8PK7/ref=sr_1_1_sspa?s=pc&amp;ie=UTF8&amp;qid=1539878894&amp;sr=1-1-spons&amp;keywords=raspberry+pi+3+b%2B&amp;psc=1">Amazon</a>.</li>
+<li>A bunch of cables and a breadboard: <a href="https://articulo.mercadolibre.com.ar/MLA-620848979-combo-kit-protoboard-fuente-5v-33v-65-cables-macho-kit06-_JM">MercadoLibre</a> - <a href="https://www.amazon.com/DEYUE-Standard-Jumper-Wires-Shape/dp/B07DMK2SH2/ref=sr_1_3?ie=UTF8&amp;qid=1539879007&amp;sr=8-3&amp;keywords=breadboard">Amazon</a>.</li>
+<li>One 5V and 2A power source: <a href="https://articulo.mercadolibre.com.ar/MLA-692902383-fuente-switching-electronica-5v-2a-2ampers-micro-usb-pronext-_JM">MercadoLibre</a> - <a href="https://www.amazon.com/Outtag-Switching-Multi-Tip-Wireless-Enclosure/dp/B0771LC63X/ref=sr_1_1_sspa?ie=UTF8&amp;qid=1539879074&amp;sr=8-1-spons&amp;keywords=5v+2a+power+source&amp;psc=1">Amazon</a>.</li>
+<li>Either a 3D printer or a shop that can print the case(although you could build your own)</li>
+<li>C270 Logitech web camera is what I used, but any other model should work: <a href="https://articulo.mercadolibre.com.ar/MLA-741143327-camara-web-cam-logitech-c270-720p-hd-twitch-skype-_JM">MercadoLibre</a> - <a href="https://www.amazon.com/Logitech-C270-960-001063-Webcam-Black/dp/B01HVIJH66/ref=sr_1_3?ie=UTF8&amp;qid=1539879095&amp;sr=8-3&amp;keywords=c270+logitech+webcam">Amazon</a>.</li>
+<li>5V laser(this one is bad but we&rsquo;ll upgrade it in the future): <a href="https://articulo.mercadolibre.com.ar/MLA-644686690-led-diodo-laser-5v-5mw-rojo-con-lente-cables-arduino-_JM">MercadoLibre</a> - <a href="https://www.amazon.com/650nm-Adjustable-Module-Copper-Pointer/dp/B07G5BCQ9G/ref=sr_1_4?ie=UTF8&amp;qid=1539879141&amp;sr=8-4&amp;keywords=5v+laser">Amazon</a>.</li>
+<li>Bonus: soldering iron if you want to build your own PCB or solder some cables</li>
+</ul>
+
+<p><strong>Note</strong>: if you want to use different things go ahead but I don&rsquo;t guarantee they will work with the same code.</p>
+
+<h2 id="motion-detection-with-gocv">Motion detection with GoCV</h2>
+
+<p>You might ask what is this <a href="https://gocv.io">GoCV</a> thing he&rsquo;s talking about? Well, first lets explain what <a href="https://opencv.org/">OpenCV</a> is. OpenCV is a library for computer vision, better yet, is <strong>the</strong> library for computer vision. It has a whole lot of functions, types and interfaces that allow us to manipulate images by applying already implemented filters and image-manipulation algorithms. It&rsquo;s a really cool project definitely check it out.<br />
+The thing is that OpenCV is implemented in C++ and it has interfaces for Java and Python. But don&rsquo;t be afraid my gopher-friend, the <a href="http://hybridgroup.com/">Hybridgroup</a> has got us. Along with other libraries they implemented a Go wrapper for OpenCV. They did this by using CGo to call C code from Go code and that C code calls the corresponding C++ code of OpenCV. It&rsquo;s really efficient and works pretty good. Lucky for us this wrapper is really fast and most of the OpenCV functionality is already there.</p>
+
+<h4 id="installation">Installation</h4>
+
+<p>We are going to be running this program on a Raspberry Pi but since Go is nice and lets us do cross-compilation we will only install GoCV and OpenCV on our development machine. So go ahead to GoCV&rsquo;s <a href="https://github.com/hybridgroup/gocv#how-to-install">how to install</a> section and follow the steps required for your platform. It&rsquo;ll take a while so I&rsquo;ll wait here till you are back.</p>
+
+<p>Extra: if you want to debug and change the code while testing in the Pi you cant install Go and after that install GoCV for Raspbian following <a href="https://github.com/hybridgroup/gocv#raspbian">this</a> instructions.</p>
+
+<h4 id="motion-detection-algorithm">Motion detection algorithm</h4>
+
+<p>You back? Awesome. Lets explain just a bit how the motion detection algorithm works so that you understand what it&rsquo;s going on and can tweak it to your needs.</p>
+
+<p>Since we are going to run this on the Pi we are not going to use a fancy already trainer neural network with near zero error margin. Instead we will do something relatively simple:</p>
+
+<ul>
+<li>When the program starts we take a picture, convert it to gray and blur it using the <a href="https://en.wikipedia.org/wiki/Gaussian_blur">Guassian blur</a>. That first frame will be considered our background so try not be there when it starts</li>
+<li>Constantly read new frames, perform the same conversion we did before, compute the absolute difference between the first frame and the current frame, apply a <a href="https://en.wikipedia.org/wiki/Thresholding_(image_processing)">threshold</a> to the image so that we create a binary image were the area of movement will look really bright. Finally <a href="https://en.wikipedia.org/wiki/Dilation_(morphology)">dilate</a> the resulting binary image and find the biggest contour, we will consider that contour our area of movement.</li>
+</ul>
+
+<p>Once all this filters were applied our image will look something like this:
+<img src="http://matiaspan.me/images/threshold-image.png" alt="motion-image" /></p>
+
+<p>Time to implement this using GoCV.<br />
+First lets write a program that opens the feed of a camera to read images(I&rsquo;ll use device camera 0 but check which one you have to use), stores the first frame and starts reading new frames non stop while showing them on a window(error handling for now is out of scope):</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">package</span> main
+
+<span style="color:#fff;font-weight:bold">import</span> (
+	<span style="color:#0ff;font-weight:bold">&#34;log&#34;</span>
+	<span style="color:#0ff;font-weight:bold">&#34;gocv.io/x/gocv&#34;</span>
+)
+
+<span style="color:#fff;font-weight:bold">var</span> (
+	firstFrame = gocv.NewMat()
+	frame = gocv.NewMat()
+)
+
+<span style="color:#fff;font-weight:bold">func</span> main() {
+	window := gocv.NewWindow(<span style="color:#0ff;font-weight:bold">&#34;Motion&#34;</span>)
+	video, _ := gocv.OpenVideoCapture(<span style="color:#ff0;font-weight:bold">0</span>)
+
+	video.Read(&amp;firstFrame)
+	<span style="color:#fff;font-weight:bold">for</span> {
+		video.Read(&amp;frame)
+		window.IMShow(frame)
+		<span style="color:#fff;font-weight:bold">if</span> window.WaitKey(<span style="color:#ff0;font-weight:bold">1</span>) == <span style="color:#ff0;font-weight:bold">27</span> {
+			<span style="color:#fff;font-weight:bold">break</span>
+		}
+	}
+
+	video.Close()
+	window.Close()
+	firstFrame.Close()
+	frame.Close()
+}</code></pre></div>
+<p>If you run this program you&rsquo;ll basically be streaming from your camera to the window that just opened. To quit this window you can hit <code>escape</code>, that is what that <code>if window.WaitKey(1) == 27</code> is doing.</p>
+
+<p>Since each frame we read(including the first one) needs to be converted to a gray-scale image first and blurred later we are going to write a function that does this for us:</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">func</span> convertFrame(src gocv.Mat, dst *gocv.Mat) {
+	gocv.Resize(src, &amp;src, image.Point{X: <span style="color:#ff0;font-weight:bold">500</span>, Y: <span style="color:#ff0;font-weight:bold">500</span>}, <span style="color:#ff0;font-weight:bold">0</span>, <span style="color:#ff0;font-weight:bold">0</span>, gocv.InterpolationLinear)
+	gocv.CvtColor(src, dst, gocv.ColorBGRToGray)
+	gocv.GaussianBlur(*dst, dst, image.Point{X: <span style="color:#ff0;font-weight:bold">21</span>, Y: <span style="color:#ff0;font-weight:bold">21</span>}, <span style="color:#ff0;font-weight:bold">0</span>, <span style="color:#ff0;font-weight:bold">0</span>, gocv.BorderReflect101)
+}</code></pre></div>
+<p>Lets walk through that function. First we are resizing the image with the <a href="https://godoc.org/gocv.io/x/gocv#Resize">Resize</a> function since working with squared images is a lot easier and faster. Then we use the <a href="https://godoc.org/gocv.io/x/gocv#CvtColor">CvtColor</a> function to convert the image to gray-scale and finally we apply the <a href="https://godoc.org/gocv.io/x/gocv#GaussianBlur">GaussianBlur</a> to the gray image so that we get the blurred image we wanted.</p>
+
+<p>Now rewrite your previous program to call this function each time we read a new frame(including the first one). Basically add the line <code>convertFrame(img, &amp;img)</code> after each <code>video.Read</code>, where <code>img</code> is the <a href="https://godoc.org/gocv.io/x/gocv#Mat">gocv.Mat</a> you used to read a new frame. If all went well then the window should display images that look kinda like this:
+IMAGE</p>
+
+<p>We have the first frame and the current frame already converted to gray scale and blurred, now we need to compute the absolute difference between those two and apply the required threshold and dilation to the resulting difference:</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">gocv.AbsDiff(firstFrame, frame, &amp;difference)
+gocv.Threshold(difference, &amp;difference, <span style="color:#ff0;font-weight:bold">50</span>, <span style="color:#ff0;font-weight:bold">255</span>, gocv.ThresholdBinary)
+gocv.Dilate(difference, &amp;difference, kernel)</code></pre></div>
+<p>The name of this functions are a bit self explanatory. <a href="https://godoc.org/gocv.io/x/gocv#AbsDiff">AbsDiff</a> computes the absolute difference between the first frame and the new frame and stores that difference on the <code>difference</code> mat. <a href="https://godoc.org/gocv.io/x/gocv#Threshold">Threshold</a> converts the gray image to a binary image by applying a fixed-level thresholding to each pixel and finally <a href="https://godoc.org/gocv.io/x/gocv#Dilate">Dilate</a> dilates the image by using the specific <code>kernel</code> element, in this case our kernel is empty.<br />
+The best thing you can do to understand all this best is to read the docs for each function and play around with the values that they receive, for example what happens when you change those two magic numbers that the <code>Threshold</code> function receives? What about the type of the threshold?<br />
+If you are curious here are most of the different types of thresholds that you can apply to an image:
+<img src="http://matiaspan.me/images/thresholds-multiple-image.png" alt="thresholds-multiple-image.png" /></p>
+
+<p>Lets add those filters to our code and we&rsquo;ll display the <code>difference</code> mat instead of the normal <code>frame</code> mat we&rsquo;ve been displaying so far:</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">package</span> main
+
+<span style="color:#fff;font-weight:bold">import</span> (
+	<span style="color:#0ff;font-weight:bold">&#34;image&#34;</span>
+
+	<span style="color:#0ff;font-weight:bold">&#34;gocv.io/x/gocv&#34;</span>
+)
+
+<span style="color:#fff;font-weight:bold">var</span> (
+	firstFrame = gocv.NewMat()
+	frame      = gocv.NewMat()
+	difference = gocv.NewMat()
+	kernel     = gocv.NewMat()
+)
+
+<span style="color:#fff;font-weight:bold">func</span> main() {
+	window := gocv.NewWindow(<span style="color:#0ff;font-weight:bold">&#34;Motion&#34;</span>)
+	video, _ := gocv.OpenVideoCapture(<span style="color:#ff0;font-weight:bold">0</span>)
+
+	video.Read(&amp;firstFrame)
+	convertFrame(firstFrame, &amp;firstFrame)
+	<span style="color:#fff;font-weight:bold">for</span> {
+		video.Read(&amp;frame)
+		convertFrame(frame, &amp;frame)
+
+		gocv.AbsDiff(firstFrame, frame, &amp;difference)
+		gocv.Threshold(difference, &amp;difference, <span style="color:#ff0;font-weight:bold">50</span>, <span style="color:#ff0;font-weight:bold">255</span>, gocv.ThresholdBinary)
+		gocv.Dilate(difference, &amp;difference, kernel)
+		window.IMShow(difference)
+		<span style="color:#fff;font-weight:bold">if</span> window.WaitKey(<span style="color:#ff0;font-weight:bold">1</span>) == <span style="color:#ff0;font-weight:bold">27</span> {
+			<span style="color:#fff;font-weight:bold">break</span>
+		}
+	}
+
+	video.Close()
+	window.Close()
+	firstFrame.Close()
+	frame.Close()
+}
+
+<span style="color:#fff;font-weight:bold">func</span> convertFrame(src gocv.Mat, dst *gocv.Mat) {
+	gocv.Resize(src, &amp;src, image.Point{X: <span style="color:#ff0;font-weight:bold">500</span>, Y: <span style="color:#ff0;font-weight:bold">500</span>}, <span style="color:#ff0;font-weight:bold">0</span>, <span style="color:#ff0;font-weight:bold">0</span>, gocv.InterpolationLinear)
+	gocv.CvtColor(src, dst, gocv.ColorBGRToGray)
+	gocv.GaussianBlur(*dst, dst, image.Point{X: <span style="color:#ff0;font-weight:bold">21</span>, Y: <span style="color:#ff0;font-weight:bold">21</span>}, <span style="color:#ff0;font-weight:bold">0</span>, <span style="color:#ff0;font-weight:bold">0</span>, gocv.BorderReflect101)
+}</code></pre></div>
+<p>Try running this program by first having the camera point directly at you when the program first starts. What happens when you move around? Or even better, what happens when you leave the chair? You are going to see yourself all bright, but you aren&rsquo;t there are you? What kind of sorcery is this!!??<br />
+Well that&rsquo;s what it&rsquo;s supposed to happen. Remember that all the filters we are applying are over the absolute difference of the first frame and the current frame, this means that if you are on the first frame you will be part of the &ldquo;background&rdquo; and whenever you leave the image there will be a difference on that area since instead of you sitting there the image will pick up everything that was behind you. This is why you see yourself sitting there even though you are not. It&rsquo;s either that or magic, who knows.<br />
+Try running this code without you being there for the first frame, once the program is running pop in front of the camera, you should be looking into an image that resembles this:
+<img src="http://matiaspan.me/images/threshold-image.png" alt="threshold-image" /></p>
+
+<p>OK, we have our big bright spot on our image, now is time that we find some contours. I have to admit I thought this was going to be <strong>really</strong> hard, but thanks to GoCV&rsquo;s <a href="https://godoc.org/gocv.io/x/gocv#FindContours">FindContours</a> function all we have to do is call it, iterate over all the contours and pick the contour that has the biggest area. Lets write a function that does exactly that but it also makes sure that the areas are bigger than some minimum:</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#007f7f">// bestContour obtains the biggest contour in the frame provided is bigger
+</span><span style="color:#007f7f">// than the minArea.
+</span><span style="color:#007f7f"></span><span style="color:#fff;font-weight:bold">func</span> bestContour(frame gocv.Mat, minArea <span style="color:#fff;font-weight:bold">float64</span>) []image.Point {
+	cnts := gocv.FindContours(frame, gocv.RetrievalExternal, gocv.ChainApproxSimple)
+	<span style="color:#fff;font-weight:bold">var</span> (
+		bestCnt  []image.Point
+		bestArea = minArea
+	)
+	<span style="color:#fff;font-weight:bold">for</span> _, cnt := <span style="color:#fff;font-weight:bold">range</span> cnts {
+		<span style="color:#fff;font-weight:bold">if</span> area := gocv.ContourArea(cnt); area &gt; bestArea {
+			bestArea = area
+			bestCnt = cnt
+		}
+	}
+	<span style="color:#fff;font-weight:bold">return</span> bestCnt
+}</code></pre></div>
+<p>We will call this function with the <code>difference</code> mat, since that is the one where we applied all the filters. After this function ends we will either have the biggest contour that was found on the image or nothing at all. We can check if we have results or not by checking the <code>len</code> of the <code>[]image.Point</code> array that was returned. If we have a contour then we will draw a rectangle on the base image to show were was the area of movement found:</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">package</span> main
+
+<span style="color:#fff;font-weight:bold">import</span> (
+	<span style="color:#0ff;font-weight:bold">&#34;image&#34;</span>
+	<span style="color:#0ff;font-weight:bold">&#34;image/color&#34;</span>
+
+	<span style="color:#0ff;font-weight:bold">&#34;gocv.io/x/gocv&#34;</span>
+)
+
+<span style="color:#fff;font-weight:bold">var</span> (
+	firstFrame = gocv.NewMat()
+	frame      = gocv.NewMat()
+	gray       = gocv.NewMat()
+	difference = gocv.NewMat()
+	kernel     = gocv.NewMat()
+
+	motion    = gocv.NewWindow(<span style="color:#0ff;font-weight:bold">&#34;Motion&#34;</span>)
+	threshold = gocv.NewWindow(<span style="color:#0ff;font-weight:bold">&#34;Threshold&#34;</span>)
+
+	rectColor = color.RGBA{G: <span style="color:#ff0;font-weight:bold">255</span>}
+	textColor = color.RGBA{B: <span style="color:#ff0;font-weight:bold">255</span>}
+
+	statusPoint = image.Pt(<span style="color:#ff0;font-weight:bold">10</span>, <span style="color:#ff0;font-weight:bold">20</span>)
+)
+
+<span style="color:#fff;font-weight:bold">func</span> main() {
+	video, _ := gocv.OpenVideoCapture(<span style="color:#ff0;font-weight:bold">0</span>)
+
+	motion.ResizeWindow(<span style="color:#ff0;font-weight:bold">500</span>, <span style="color:#ff0;font-weight:bold">500</span>)
+	threshold.ResizeWindow(<span style="color:#ff0;font-weight:bold">500</span>, <span style="color:#ff0;font-weight:bold">500</span>)
+	motion.MoveWindow(<span style="color:#ff0;font-weight:bold">0</span>, <span style="color:#ff0;font-weight:bold">0</span>)
+	threshold.MoveWindow(<span style="color:#ff0;font-weight:bold">500</span>, <span style="color:#ff0;font-weight:bold">0</span>)
+
+	video.Read(&amp;firstFrame)
+	convertFrame(firstFrame, &amp;firstFrame)
+
+	<span style="color:#fff;font-weight:bold">for</span> {
+		video.Read(&amp;frame)
+		convertFrame(frame, &amp;gray)
+
+		gocv.AbsDiff(firstFrame, gray, &amp;difference)
+		gocv.Threshold(difference, &amp;difference, <span style="color:#ff0;font-weight:bold">50</span>, <span style="color:#ff0;font-weight:bold">255</span>, gocv.ThresholdBinary)
+		gocv.Dilate(difference, &amp;difference, kernel)
+		cnt := bestContour(difference.Clone(), <span style="color:#ff0;font-weight:bold">5000</span>)
+		<span style="color:#fff;font-weight:bold">if</span> <span style="color:#fff;font-weight:bold">len</span>(cnt) == <span style="color:#ff0;font-weight:bold">0</span> {
+			<span style="color:#fff;font-weight:bold">if</span> imShow() {
+				<span style="color:#fff;font-weight:bold">break</span>
+			}
+			<span style="color:#fff;font-weight:bold">continue</span>
+		}
+		rect := gocv.BoundingRect(cnt)
+		gocv.Rectangle(&amp;frame, rect, rectColor, <span style="color:#ff0;font-weight:bold">2</span>)
+		gocv.PutText(&amp;frame, <span style="color:#0ff;font-weight:bold">&#34;Motion detected&#34;</span>, statusPoint, gocv.FontHersheyPlain, <span style="color:#ff0;font-weight:bold">1.2</span>, textColor, <span style="color:#ff0;font-weight:bold">2</span>)
+		<span style="color:#fff;font-weight:bold">if</span> imShow() {
+			<span style="color:#fff;font-weight:bold">break</span>
+		}
+
+	}
+
+	video.Close()
+	motion.Close()
+	threshold.Close()
+	firstFrame.Close()
+	gray.Close()
+	difference.Close()
+	frame.Close()
+}
+
+<span style="color:#fff;font-weight:bold">func</span> imShow() <span style="color:#fff;font-weight:bold">bool</span> {
+	motion.IMShow(frame)
+	threshold.IMShow(difference)
+	<span style="color:#fff;font-weight:bold">return</span> motion.WaitKey(<span style="color:#ff0;font-weight:bold">1</span>) == <span style="color:#ff0;font-weight:bold">27</span> || threshold.WaitKey(<span style="color:#ff0;font-weight:bold">1</span>) == <span style="color:#ff0;font-weight:bold">27</span>
+}
+
+<span style="color:#fff;font-weight:bold">func</span> convertFrame(src gocv.Mat, dst *gocv.Mat) {
+	gocv.Resize(src, &amp;src, image.Point{X: <span style="color:#ff0;font-weight:bold">500</span>, Y: <span style="color:#ff0;font-weight:bold">500</span>}, <span style="color:#ff0;font-weight:bold">0</span>, <span style="color:#ff0;font-weight:bold">0</span>, gocv.InterpolationLinear)
+	gocv.CvtColor(src, dst, gocv.ColorBGRToGray)
+	gocv.GaussianBlur(*dst, dst, image.Point{X: <span style="color:#ff0;font-weight:bold">21</span>, Y: <span style="color:#ff0;font-weight:bold">21</span>}, <span style="color:#ff0;font-weight:bold">0</span>, <span style="color:#ff0;font-weight:bold">0</span>, gocv.BorderReflect101)
+}
+
+<span style="color:#007f7f">// bestContour obtains the biggest contour in the frame provided is bigger
+</span><span style="color:#007f7f">// than the minArea.
+</span><span style="color:#007f7f"></span><span style="color:#fff;font-weight:bold">func</span> bestContour(frame gocv.Mat, minArea <span style="color:#fff;font-weight:bold">float64</span>) []image.Point {
+	cnts := gocv.FindContours(frame, gocv.RetrievalExternal, gocv.ChainApproxSimple)
+	<span style="color:#fff;font-weight:bold">var</span> (
+		bestCnt  []image.Point
+		bestArea = minArea
+	)
+	<span style="color:#fff;font-weight:bold">for</span> _, cnt := <span style="color:#fff;font-weight:bold">range</span> cnts {
+		<span style="color:#fff;font-weight:bold">if</span> area := gocv.ContourArea(cnt); area &gt; bestArea {
+			bestArea = area
+			bestCnt = cnt
+		}
+	}
+	<span style="color:#fff;font-weight:bold">return</span> bestCnt
+}</code></pre></div>
+<p>We made a <strong>lot</strong> of changes in that code, lets walk through each of them. First off we now have two windows instead of one, why? Well we are going to be displaying two different types of images, in the <code>motion</code> window we will display the normal image with the rectangle drawn on top of the area of motion(if there is any). In the <code>threshold</code> window we will show the <code>difference</code> mat we&rsquo;ve been showing so far. We also did a few resizes and move the windows over so that they are displayed side by side.<br />
+Since now we want to preserve the colors of the frames we read we can not use the same <code>frame</code> mat when we call <code>convertFrame</code>, this is why we have the new <code>gray</code> mat that we use for the conversion.<br />
+The most important change of that is right here:</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">cnt := bestContour(difference.Clone(), <span style="color:#ff0;font-weight:bold">5000</span>)
+<span style="color:#fff;font-weight:bold">if</span> <span style="color:#fff;font-weight:bold">len</span>(cnt) == <span style="color:#ff0;font-weight:bold">0</span> {
+	<span style="color:#fff;font-weight:bold">if</span> imShow() {
+		<span style="color:#fff;font-weight:bold">break</span>
+	}
+	<span style="color:#fff;font-weight:bold">continue</span>
+}
+rect := gocv.BoundingRect(cnt)
+gocv.Rectangle(&amp;frame, rect, rectColor, <span style="color:#ff0;font-weight:bold">2</span>)
+gocv.PutText(&amp;frame, <span style="color:#0ff;font-weight:bold">&#34;Motion detected&#34;</span>, statusPoint, gocv.FontHersheyPlain, <span style="color:#ff0;font-weight:bold">1.2</span>, textColor, <span style="color:#ff0;font-weight:bold">2</span>)</code></pre></div>
+<p>First we call the <code>bestContour</code> function to obtain the biggest area of movement, if there are no results we simply call the new <code>imShow</code> image that displays the images without drawing anything on them. But if we have results then we first have to find the <a href="https://godoc.org/image#Rectangle">rectangle</a> of that area using the <a href="https://godoc.org/gocv.io/x/gocv#BoundingRect">BoundingRect</a> function, once we have that we simply draw the rectangle on our image with <a href="https://godoc.org/gocv.io/x/gocv#Rectangle">Rectangle</a> and display the &ldquo;Motion detected&rdquo; text on our image.<br />
+If all went well, when you run this code and pop in front of the camera you should have something similar to this:
+<img src="http://matiaspan.me/images/motion-image.png" alt="motion-image" /></p>
+
+<p>And voila! You have motion detection! Don&rsquo;t go out and celebrate with a beer <em>yet</em>. We need to compile this to a binary that can run on the RPi, move that binary there and run it. In order to see this program running on the raspberry pi you will need to have a display connected to it.<br />
+You can compile the binary for the RPi with the following command:</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">GOOS=linux GOARCH=arm GOARM=<span style="color:#ff0;font-weight:bold">5</span> go build</code></pre></div>
+<p>Once you have your binary you can send it over with <code>scp</code>:</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">scp &lt;USER&gt;@&lt;RASPBERRY IP&gt;:&lt;DIRECTORY ON THE PI&gt; &lt;BINARY-NAME&gt;</code></pre></div>
+<p>Change those parameters accordingly and run the command. SSH into the RPi and run the binary, if you have a video camera connected to the Pi that can be identified as device 0 then you should see the same image you saw when ran this program on your development machine.</p>
+
+<p>Congrats! Now you can go and have some beers!
+GIF</p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>On this blog post you saw how to build a simple and lightweight motion detection program with GoCV and how to compile and run that on the raspberry pi. The idea is to connect this two servos and make them follow the area of movement, all that will be explained in Part 2 and Part 3 of this blog post, so stick around for that!</p>
+
+<p>Thank you!</p>
+
+      </div>
+
+      <footer>
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <footer class="footer">
+  <section class="container">
+    
+      <p>Contact me @ matias.pan26@gmail.com</p>
+    
+     © 2018
+    
+       · 
+      Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    
+    
+  </section>
+</footer>
+
+    </main>
+
+    
+
+  </body>
+
+</html>

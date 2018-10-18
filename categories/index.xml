@@ -2,20 +2,38 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Matias Pan</title>
-    <link>//matiaspan.me/categories/</link>
+    <link>http://matiaspan.me/categories/</link>
     <description>Recent content in Categories on Matias Pan</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     
-	<atom:link href="//matiaspan.me/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://matiaspan.me/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>Computer Vision</title>
+      <link>http://matiaspan.me/categories/computer-vision/</link>
+      <pubDate>Thu, 18 Oct 2018 12:44:14 -0300</pubDate>
+      
+      <guid>http://matiaspan.me/categories/computer-vision/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Gocv</title>
+      <link>http://matiaspan.me/categories/gocv/</link>
+      <pubDate>Thu, 18 Oct 2018 12:44:14 -0300</pubDate>
+      
+      <guid>http://matiaspan.me/categories/gocv/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Kubernetes</title>
-      <link>//matiaspan.me/categories/kubernetes/</link>
+      <link>http://matiaspan.me/categories/kubernetes/</link>
       <pubDate>Sun, 16 Sep 2018 17:57:48 -0300</pubDate>
       
-      <guid>//matiaspan.me/categories/kubernetes/</guid>
+      <guid>http://matiaspan.me/categories/kubernetes/</guid>
       <description></description>
     </item>
     

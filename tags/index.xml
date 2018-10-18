@@ -2,39 +2,84 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Matias Pan</title>
-    <link>//matiaspan.me/tags/</link>
+    <link>http://matiaspan.me/tags/</link>
     <description>Recent content in Tags on Matias Pan</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 16 Sep 2018 17:57:48 -0300</lastBuildDate>
     
-	<atom:link href="//matiaspan.me/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://matiaspan.me/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Cluster</title>
-      <link>//matiaspan.me/tags/cluster/</link>
+      <link>http://matiaspan.me/tags/cluster/</link>
       <pubDate>Sun, 16 Sep 2018 17:57:48 -0300</pubDate>
       
-      <guid>//matiaspan.me/tags/cluster/</guid>
+      <guid>http://matiaspan.me/tags/cluster/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Computer Vision</title>
+      <link>http://matiaspan.me/tags/computer-vision/</link>
+      <pubDate>Thu, 18 Oct 2018 12:44:14 -0300</pubDate>
+      
+      <guid>http://matiaspan.me/tags/computer-vision/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Go</title>
+      <link>http://matiaspan.me/tags/go/</link>
+      <pubDate>Thu, 18 Oct 2018 12:44:14 -0300</pubDate>
+      
+      <guid>http://matiaspan.me/tags/go/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Gobot</title>
+      <link>http://matiaspan.me/tags/gobot/</link>
+      <pubDate>Thu, 18 Oct 2018 12:44:14 -0300</pubDate>
+      
+      <guid>http://matiaspan.me/tags/gobot/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Gocv</title>
+      <link>http://matiaspan.me/tags/gocv/</link>
+      <pubDate>Thu, 18 Oct 2018 12:44:14 -0300</pubDate>
+      
+      <guid>http://matiaspan.me/tags/gocv/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Gogs</title>
-      <link>//matiaspan.me/tags/gogs/</link>
+      <link>http://matiaspan.me/tags/gogs/</link>
       <pubDate>Sun, 16 Sep 2018 17:57:48 -0300</pubDate>
       
-      <guid>//matiaspan.me/tags/gogs/</guid>
+      <guid>http://matiaspan.me/tags/gogs/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Iot</title>
+      <link>http://matiaspan.me/tags/iot/</link>
+      <pubDate>Thu, 18 Oct 2018 12:44:14 -0300</pubDate>
+      
+      <guid>http://matiaspan.me/tags/iot/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Kubernetes</title>
-      <link>//matiaspan.me/tags/kubernetes/</link>
+      <link>http://matiaspan.me/tags/kubernetes/</link>
       <pubDate>Sun, 16 Sep 2018 17:57:48 -0300</pubDate>
       
-      <guid>//matiaspan.me/tags/kubernetes/</guid>
+      <guid>http://matiaspan.me/tags/kubernetes/</guid>
       <description></description>
     </item>
     
