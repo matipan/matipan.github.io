@@ -376,7 +376,7 @@ gocv.PutText(&amp;frame, <span style="color:#ed9d13">&#34;Motion detected&#34;</
 If all went well, when you run this code and pop in front of the camera you should have something similar to this:
 <img src="http://matiaspan.me/images/motion-image.png" alt="motion-image" /></p>
 
-<p>And voil�! You have motion detection! Don&rsquo;t go out and celebrate with a beer <em>yet</em>. We need to compile this to a binary that can run on the RPi, move that binary there and run it. In order to see this program running on the raspberry pi, you will need to have a display connected to it.<br />
+<p>And voila! You have motion detection! Don&rsquo;t go out and celebrate with a beer <em>yet</em>. We need to compile this to a binary that can run on the RPi, move that binary there and run it. In order to see this program running on the raspberry pi, you will need to have a display connected to it.<br />
 You can compile the binary for the RPi with the following command:</p>
 <div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#40ffff">GOOS</span>=linux <span style="color:#40ffff">GOARCH</span>=arm <span style="color:#40ffff">GOARM</span>=<span style="color:#3677a9">5</span> go build</code></pre></div>
 <p>Once you have your binary, you can send it over with <code>scp</code>:</p>
