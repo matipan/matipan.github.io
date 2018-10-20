@@ -13,7 +13,7 @@
     <item>
       <title>Computer Vision</title>
       <link>http://matiaspan.me/categories/computer-vision/</link>
-      <pubDate>Thu, 18 Oct 2018 12:44:14 -0300</pubDate>
+      <pubDate>Fri, 19 Oct 2018 22:24:09 -0300</pubDate>
       
       <guid>http://matiaspan.me/categories/computer-vision/</guid>
       <description></description>
@@ -22,7 +22,7 @@
     <item>
       <title>Gocv</title>
       <link>http://matiaspan.me/categories/gocv/</link>
-      <pubDate>Thu, 18 Oct 2018 12:44:14 -0300</pubDate>
+      <pubDate>Fri, 19 Oct 2018 22:24:09 -0300</pubDate>
       
       <guid>http://matiaspan.me/categories/gocv/</guid>
       <description></description>
@@ -34,6 +34,15 @@
       <pubDate>Sun, 16 Sep 2018 17:57:48 -0300</pubDate>
       
       <guid>http://matiaspan.me/categories/kubernetes/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Pyimagesearch</title>
+      <link>http://matiaspan.me/categories/pyimagesearch/</link>
+      <pubDate>Fri, 19 Oct 2018 22:24:09 -0300</pubDate>
+      
+      <guid>http://matiaspan.me/categories/pyimagesearch/</guid>
       <description></description>
     </item>
     

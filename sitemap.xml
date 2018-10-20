@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>http://matiaspan.me/posts/box-tracking-with-gocv/</loc>
+    <lastmod>2018-10-19T22:24:09-03:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://matiaspan.me/posts/motion-tracking-turret-with-gobot-and-gocv/</loc>
     <lastmod>2018-10-18T12:44:14-03:00</lastmod>
   </url>
@@ -25,13 +30,13 @@
   
   <url>
     <loc>http://matiaspan.me/tags/computer-vision/</loc>
-    <lastmod>2018-10-18T12:44:14-03:00</lastmod>
+    <lastmod>2018-10-19T22:24:09-03:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://matiaspan.me/categories/computer-vision/</loc>
-    <lastmod>2018-10-18T12:44:14-03:00</lastmod>
+    <lastmod>2018-10-19T22:24:09-03:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -49,13 +54,13 @@
   
   <url>
     <loc>http://matiaspan.me/tags/gocv/</loc>
-    <lastmod>2018-10-18T12:44:14-03:00</lastmod>
+    <lastmod>2018-10-19T22:24:09-03:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://matiaspan.me/categories/gocv/</loc>
-    <lastmod>2018-10-18T12:44:14-03:00</lastmod>
+    <lastmod>2018-10-19T22:24:09-03:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -85,13 +90,25 @@
   
   <url>
     <loc>http://matiaspan.me/</loc>
-    <lastmod>2018-10-18T12:44:14-03:00</lastmod>
+    <lastmod>2018-10-19T22:24:09-03:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://matiaspan.me/posts/</loc>
-    <lastmod>2018-10-18T12:44:14-03:00</lastmod>
+    <lastmod>2018-10-19T22:24:09-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://matiaspan.me/tags/pyimagesearch/</loc>
+    <lastmod>2018-10-19T22:24:09-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://matiaspan.me/categories/pyimagesearch/</loc>
+    <lastmod>2018-10-19T22:24:09-03:00</lastmod>
     <priority>0</priority>
   </url>
   

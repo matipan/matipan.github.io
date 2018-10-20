@@ -6,10 +6,20 @@
     <description>Recent content in Posts on Matias Pan</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 18 Oct 2018 12:44:14 -0300</lastBuildDate>
+    <lastBuildDate>Fri, 19 Oct 2018 22:24:09 -0300</lastBuildDate>
     
 	<atom:link href="http://matiaspan.me/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Tracking color objects with GoCV</title>
+      <link>http://matiaspan.me/posts/box-tracking-with-gocv/</link>
+      <pubDate>Fri, 19 Oct 2018 22:24:09 -0300</pubDate>
+      
+      <guid>http://matiaspan.me/posts/box-tracking-with-gocv/</guid>
+      <description>Disclaimer: this blog post is just a port of Adrian&amp;rsquo;s tutorial at pyimagesearch where he shows how to track a ball using Python and OpenCV. I only changed a few things here and there and rewrote it using Go and GoCV. So all the credit should go to him
+I always prefer to start by showing what you&amp;rsquo;ll get if you stick to the end, so here it goes:</description>
+    </item>
     
     <item>
       <title>Motion tracking turret with Gobot and GoCV - Part 1</title>
