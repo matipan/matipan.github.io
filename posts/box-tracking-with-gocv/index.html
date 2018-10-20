@@ -138,11 +138,11 @@ Here are the two main sections of this post:</p>
 
 	video, _ := gocv.OpenVideoCapture(<span style="color:#3677a9">0</span>)
 	img := gocv.NewMat()
+	thresholded := gocv.NewMat()
 
 	<span style="color:#6ab825;font-weight:bold">for</span> {
 		video.Read(&amp;img)
 		gocv.CvtColor(img, &amp;img, gocv.ColorBGRToHSV)
-		thresholded := gocv.NewMat()
 		gocv.InRangeWithScalar(img,
 			gocv.Scalar{Val1: getPosFloat(lh), Val2: getPosFloat(ls), Val3: getPosFloat(lv)},
 			gocv.Scalar{Val1: getPosFloat(hh), Val2: getPosFloat(hs), Val3: getPosFloat(hv)},
