@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>kubernetes on Matias Pan&#39;s blog</title>
+    <link>https://blog.matiaspan.dev/tags/kubernetes/</link>
+    <description>Recent content in kubernetes on Matias Pan&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 16 Sep 2018 00:00:00 -0300</lastBuildDate><atom:link href="https://blog.matiaspan.dev/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Deploying Gogs to a DigitalOcean Kubernetes cluster</title>
+      <link>https://blog.matiaspan.dev/posts/deploying-gogs-to-a-custom-kubernetes-cluster/</link>
+      <pubDate>Sun, 16 Sep 2018 00:00:00 -0300</pubDate>
+      
+      <guid>https://blog.matiaspan.dev/posts/deploying-gogs-to-a-custom-kubernetes-cluster/</guid>
+      <description>In this post I will show step by step how to create a Kubernetes cluster on DigitalOcean and then deploy Gogs to the cluster using a set of tools that automate all this.
+Creating the Cluster Choosing the Cloud Provider I chose DigitalOcean as the cloud provider since it&amp;rsquo;s the cheapest I could find and it has worked really well for me in the past, plus I was already familiar with a few of their products.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>openrtb on Matias Pan&#39;s blog</title>
+    <link>https://blog.matiaspan.dev/tags/openrtb/</link>
+    <description>Recent content in openrtb on Matias Pan&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 22 Nov 2020 00:00:00 -0300</lastBuildDate><atom:link href="https://blog.matiaspan.dev/tags/openrtb/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Fast JSON parsing in Go for OpenRTB</title>
+      <link>https://blog.matiaspan.dev/posts/fast-json-parsing-for-open-rtb/</link>
+      <pubDate>Sun, 22 Nov 2020 00:00:00 -0300</pubDate>
+      
+      <guid>https://blog.matiaspan.dev/posts/fast-json-parsing-for-open-rtb/</guid>
+      <description>The code used for this test can be found here.
+TL;DR: when looking into overall performance and usability, json-iter is the clear winner. It gives roughly a 4x improvement over encoding/json and 1.2x over the second most performant option. It is also extremely easy to use. You simply need to import it, define a global variable (that you can call json to make it even easier) and then use it like you would use encoding/json.</description>
+    </item>
+    
+  </channel>
+</rss>

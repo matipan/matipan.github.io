@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>lemoncash on Matias Pan&#39;s blog</title>
+    <link>https://blog.matiaspan.dev/tags/lemoncash/</link>
+    <description>Recent content in lemoncash on Matias Pan&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 02 Oct 2022 00:00:00 -0300</lastBuildDate><atom:link href="https://blog.matiaspan.dev/tags/lemoncash/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>How services are provisioned, deployed and operated at Lemon Cash</title>
+      <link>https://blog.matiaspan.dev/posts/how-services-are-provisioned-and-deployed-at-lemoncash/</link>
+      <pubDate>Sun, 02 Oct 2022 00:00:00 -0300</pubDate>
+      
+      <guid>https://blog.matiaspan.dev/posts/how-services-are-provisioned-and-deployed-at-lemoncash/</guid>
+      <description>Lemon Cash is a crypto startup based in Argentina that operates digital wallets, card payments and more. In this blog post I describe how we implemented a solution for provisioning, deploying and operating services that empowers developers to ship more quickly. This solution is not a fully fledged platform but it provides similar benefits by standing on top of strongly defined concepts and conventions. What we implemented only makes sense in the context in which the company was in, so I will start by explaining what that context was.</description>
+    </item>
+    
+  </channel>
+</rss>
