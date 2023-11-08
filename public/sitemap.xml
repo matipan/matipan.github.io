@@ -2,52 +2,52 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://blog.matiaspan.dev/tags/aws/</loc>
+    <lastmod>2023-11-07T00:00:00-03:00</lastmod>
+  </url><url>
     <loc>https://blog.matiaspan.dev/categories/</loc>
-    <lastmod>2022-10-02T00:00:00-03:00</lastmod>
+    <lastmod>2023-11-07T00:00:00-03:00</lastmod>
+  </url><url>
+    <loc>https://blog.matiaspan.dev/tags/dagger/</loc>
+    <lastmod>2023-11-07T00:00:00-03:00</lastmod>
   </url><url>
     <loc>https://blog.matiaspan.dev/tags/go/</loc>
-    <lastmod>2022-10-02T00:00:00-03:00</lastmod>
-  </url><url>
-    <loc>https://blog.matiaspan.dev/posts/how-services-are-provisioned-and-deployed-at-lemoncash/</loc>
-    <lastmod>2022-10-02T00:00:00-03:00</lastmod>
-  </url><url>
-    <loc>https://blog.matiaspan.dev/tags/infrastructure/</loc>
-    <lastmod>2022-10-02T00:00:00-03:00</lastmod>
+    <lastmod>2023-11-07T00:00:00-03:00</lastmod>
   </url><url>
     <loc>https://blog.matiaspan.dev/categories/infrastructure/</loc>
-    <lastmod>2022-10-02T00:00:00-03:00</lastmod>
-  </url><url>
-    <loc>https://blog.matiaspan.dev/tags/lemoncash/</loc>
-    <lastmod>2022-10-02T00:00:00-03:00</lastmod>
+    <lastmod>2023-11-07T00:00:00-03:00</lastmod>
   </url><url>
     <loc>https://blog.matiaspan.dev/</loc>
-    <lastmod>2022-10-02T00:00:00-03:00</lastmod>
+    <lastmod>2023-11-07T00:00:00-03:00</lastmod>
   </url><url>
     <loc>https://blog.matiaspan.dev/posts/</loc>
-    <lastmod>2022-10-02T00:00:00-03:00</lastmod>
+    <lastmod>2023-11-07T00:00:00-03:00</lastmod>
+  </url><url>
+    <loc>https://blog.matiaspan.dev/tags/pulumi/</loc>
+    <lastmod>2023-11-07T00:00:00-03:00</lastmod>
+  </url><url>
+    <loc>https://blog.matiaspan.dev/posts/streamlining-ci-cd-with-dagger-beyond-yaml/</loc>
+    <lastmod>2023-11-07T00:00:00-03:00</lastmod>
   </url><url>
     <loc>https://blog.matiaspan.dev/tags/</loc>
+    <lastmod>2023-11-07T00:00:00-03:00</lastmod>
+  </url><url>
+    <loc>https://blog.matiaspan.dev/posts/how-services-are-provisioned-and-deployed-at-lemoncash/</loc>
     <lastmod>2022-10-02T00:00:00-03:00</lastmod>
   </url><url>
     <loc>https://blog.matiaspan.dev/tags/terraform/</loc>
     <lastmod>2022-10-02T00:00:00-03:00</lastmod>
   </url><url>
-    <loc>https://blog.matiaspan.dev/posts/fast-json-parsing-for-open-rtb/</loc>
+    <loc>https://blog.matiaspan.dev/categories/development/</loc>
     <lastmod>2020-11-22T00:00:00-03:00</lastmod>
   </url><url>
-    <loc>https://blog.matiaspan.dev/categories/go/</loc>
+    <loc>https://blog.matiaspan.dev/posts/fast-json-parsing-for-open-rtb/</loc>
     <lastmod>2020-11-22T00:00:00-03:00</lastmod>
   </url><url>
     <loc>https://blog.matiaspan.dev/tags/json/</loc>
     <lastmod>2020-11-22T00:00:00-03:00</lastmod>
   </url><url>
-    <loc>https://blog.matiaspan.dev/tags/openrtb/</loc>
-    <lastmod>2020-11-22T00:00:00-03:00</lastmod>
-  </url><url>
     <loc>https://blog.matiaspan.dev/categories/computer-vision/</loc>
-    <lastmod>2019-03-16T00:00:00-03:00</lastmod>
-  </url><url>
-    <loc>https://blog.matiaspan.dev/tags/gocv/</loc>
     <lastmod>2019-03-16T00:00:00-03:00</lastmod>
   </url><url>
     <loc>https://blog.matiaspan.dev/tags/openfaas/</loc>
@@ -59,17 +59,8 @@
     <loc>https://blog.matiaspan.dev/posts/writing-a-face-detection-function-for-openfaas/</loc>
     <lastmod>2019-03-16T00:00:00-03:00</lastmod>
   </url><url>
-    <loc>https://blog.matiaspan.dev/tags/computer-vision/</loc>
-    <lastmod>2018-10-19T00:00:00-03:00</lastmod>
-  </url><url>
-    <loc>https://blog.matiaspan.dev/tags/pyimagesearch/</loc>
-    <lastmod>2018-10-19T00:00:00-03:00</lastmod>
-  </url><url>
     <loc>https://blog.matiaspan.dev/posts/box-tracking-with-gocv/</loc>
     <lastmod>2018-10-19T00:00:00-03:00</lastmod>
-  </url><url>
-    <loc>https://blog.matiaspan.dev/tags/gobot/</loc>
-    <lastmod>2018-10-18T00:00:00-03:00</lastmod>
   </url><url>
     <loc>https://blog.matiaspan.dev/posts/motion-tracking-turret-with-gobot-and-gocv/</loc>
     <lastmod>2018-10-18T00:00:00-03:00</lastmod>
@@ -77,10 +68,9 @@
     <loc>https://blog.matiaspan.dev/posts/deploying-gogs-to-a-custom-kubernetes-cluster/</loc>
     <lastmod>2018-09-16T00:00:00-03:00</lastmod>
   </url><url>
-    <loc>https://blog.matiaspan.dev/tags/digitalocean/</loc>
-    <lastmod>2018-09-16T00:00:00-03:00</lastmod>
-  </url><url>
     <loc>https://blog.matiaspan.dev/tags/kubernetes/</loc>
     <lastmod>2018-09-16T00:00:00-03:00</lastmod>
+  </url><url>
+    <loc>https://blog.matiaspan.dev/tags/ci/cd/</loc>
   </url>
 </urlset>

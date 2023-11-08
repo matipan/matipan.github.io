@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>aws on Matias Pan&#39;s blog</title>
+    <link>https://blog.matiaspan.dev/tags/aws/</link>
+    <description>Recent content in aws on Matias Pan&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 07 Nov 2023 00:00:00 -0300</lastBuildDate><atom:link href="https://blog.matiaspan.dev/tags/aws/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Streamlining CI/CD with Dagger: Beyond YAML</title>
+      <link>https://blog.matiaspan.dev/posts/streamlining-ci-cd-with-dagger-beyond-yaml/</link>
+      <pubDate>Tue, 07 Nov 2023 00:00:00 -0300</pubDate>
+      
+      <guid>https://blog.matiaspan.dev/posts/streamlining-ci-cd-with-dagger-beyond-yaml/</guid>
+      <description>Dagger is a new tool that promises to fix the yaml and custom scripts mess that CI/CD currently is by building pipelines as code with one of the supported SDKs. I&amp;rsquo;m in the process of learning this tool, understanding where it may fall short and where it shines and I decided that sharing some of the exploration I do and the learnings it leaves me would be useful.
+NOTE: Dagger is in very active development so by the time you read this blog post it might already be deprecated.</description>
+    </item>
+    
+    <item>
+      <title>How services are provisioned, deployed and operated at Lemon Cash</title>
+      <link>https://blog.matiaspan.dev/posts/how-services-are-provisioned-and-deployed-at-lemoncash/</link>
+      <pubDate>Sun, 02 Oct 2022 00:00:00 -0300</pubDate>
+      
+      <guid>https://blog.matiaspan.dev/posts/how-services-are-provisioned-and-deployed-at-lemoncash/</guid>
+      <description>Lemon Cash is a crypto startup based in Argentina that operates digital wallets, card payments and more. In this blog post I describe how we implemented a solution for provisioning, deploying and operating services that empowers developers to ship more quickly. This solution is not a fully fledged platform but it provides similar benefits by standing on top of strongly defined concepts and conventions. What we implemented only makes sense in the context in which the company was in, so I will start by explaining what that context was.</description>
+    </item>
+    
+  </channel>
+</rss>

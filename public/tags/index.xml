@@ -6,31 +6,40 @@
     <description>Recent content in Tags on Matias Pan&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 02 Oct 2022 00:00:00 -0300</lastBuildDate><atom:link href="https://blog.matiaspan.dev/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 07 Nov 2023 00:00:00 -0300</lastBuildDate><atom:link href="https://blog.matiaspan.dev/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>aws</title>
+      <link>https://blog.matiaspan.dev/tags/aws/</link>
+      <pubDate>Tue, 07 Nov 2023 00:00:00 -0300</pubDate>
+      
+      <guid>https://blog.matiaspan.dev/tags/aws/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>dagger</title>
+      <link>https://blog.matiaspan.dev/tags/dagger/</link>
+      <pubDate>Tue, 07 Nov 2023 00:00:00 -0300</pubDate>
+      
+      <guid>https://blog.matiaspan.dev/tags/dagger/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>go</title>
       <link>https://blog.matiaspan.dev/tags/go/</link>
-      <pubDate>Sun, 02 Oct 2022 00:00:00 -0300</pubDate>
+      <pubDate>Tue, 07 Nov 2023 00:00:00 -0300</pubDate>
       
       <guid>https://blog.matiaspan.dev/tags/go/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>infrastructure</title>
-      <link>https://blog.matiaspan.dev/tags/infrastructure/</link>
-      <pubDate>Sun, 02 Oct 2022 00:00:00 -0300</pubDate>
+      <title>pulumi</title>
+      <link>https://blog.matiaspan.dev/tags/pulumi/</link>
+      <pubDate>Tue, 07 Nov 2023 00:00:00 -0300</pubDate>
       
-      <guid>https://blog.matiaspan.dev/tags/infrastructure/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>lemoncash</title>
-      <link>https://blog.matiaspan.dev/tags/lemoncash/</link>
-      <pubDate>Sun, 02 Oct 2022 00:00:00 -0300</pubDate>
-      
-      <guid>https://blog.matiaspan.dev/tags/lemoncash/</guid>
+      <guid>https://blog.matiaspan.dev/tags/pulumi/</guid>
       <description></description>
     </item>
     
@@ -53,24 +62,6 @@
     </item>
     
     <item>
-      <title>openrtb</title>
-      <link>https://blog.matiaspan.dev/tags/openrtb/</link>
-      <pubDate>Sun, 22 Nov 2020 00:00:00 -0300</pubDate>
-      
-      <guid>https://blog.matiaspan.dev/tags/openrtb/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>gocv</title>
-      <link>https://blog.matiaspan.dev/tags/gocv/</link>
-      <pubDate>Sat, 16 Mar 2019 00:00:00 -0300</pubDate>
-      
-      <guid>https://blog.matiaspan.dev/tags/gocv/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>openfaas</title>
       <link>https://blog.matiaspan.dev/tags/openfaas/</link>
       <pubDate>Sat, 16 Mar 2019 00:00:00 -0300</pubDate>
@@ -89,47 +80,20 @@
     </item>
     
     <item>
-      <title>computer-vision</title>
-      <link>https://blog.matiaspan.dev/tags/computer-vision/</link>
-      <pubDate>Fri, 19 Oct 2018 00:00:00 -0300</pubDate>
-      
-      <guid>https://blog.matiaspan.dev/tags/computer-vision/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>pyimagesearch</title>
-      <link>https://blog.matiaspan.dev/tags/pyimagesearch/</link>
-      <pubDate>Fri, 19 Oct 2018 00:00:00 -0300</pubDate>
-      
-      <guid>https://blog.matiaspan.dev/tags/pyimagesearch/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>gobot</title>
-      <link>https://blog.matiaspan.dev/tags/gobot/</link>
-      <pubDate>Thu, 18 Oct 2018 00:00:00 -0300</pubDate>
-      
-      <guid>https://blog.matiaspan.dev/tags/gobot/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>digitalocean</title>
-      <link>https://blog.matiaspan.dev/tags/digitalocean/</link>
-      <pubDate>Sun, 16 Sep 2018 00:00:00 -0300</pubDate>
-      
-      <guid>https://blog.matiaspan.dev/tags/digitalocean/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>kubernetes</title>
       <link>https://blog.matiaspan.dev/tags/kubernetes/</link>
       <pubDate>Sun, 16 Sep 2018 00:00:00 -0300</pubDate>
       
       <guid>https://blog.matiaspan.dev/tags/kubernetes/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ci/cd</title>
+      <link>https://blog.matiaspan.dev/tags/ci/cd/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.matiaspan.dev/tags/ci/cd/</guid>
       <description></description>
     </item>
     
