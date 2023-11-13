@@ -1,7 +1,7 @@
 ---
-title: "Streamlining CI/CD with Dagger: Beyond YAML"
+title: "Exploring Dagger: Building a CI/CD pipeline for IaC"
 date: 2023-11-07T00:00:00-03:00
-tags: ["pulumi", "go", "aws", "dagger", "ci/cd"]
+tags: ["pulumi", "go", "aws", "dagger", "ci/cd", "exploring-dagger"]
 categories: ["infrastructure"]
 showToc: true
 TocOpen: false
@@ -15,7 +15,7 @@ searchHidden: false
 ShowReadingTime: true
 UseHugoToc: true
 cover:
-    alt: "Building a reproducible CI pipeline for IaC with Pulumi and Dagger"
+    alt: "Exploring Dagger: Building a CI/CD pipeline for IaC"
     relative: false
     hidden: true
 editPost:
@@ -24,7 +24,9 @@ editPost:
     appendFilePath: true
 ---
 
-[Dagger](https://dagger.io/) is a new tool that promises to fix the yaml and custom scripts mess that CI/CD currently is by building pipelines as code with one of the [supported SDKs](https://docs.dagger.io/). I'm in the process of learning this tool, understanding where it may fall short and where it shines and I decided that sharing some of the exploration I do and the learnings it leaves me would be useful.
+TODO: the blog post needs to have a more critical tone to it with honesty on where things sucked.
+
+[Dagger](https://dagger.io/) is a new tool that promises to fix the yaml and custom scripts mess that CI/CD currently is by building pipelines as code with one of the [supported SDKs](https://docs.dagger.io/). I'm in the process of learning this tool, understanding where it may fall short and where it shines and I decided that sharing some of the exploration I do and the learnings it leaves me would be useful. This post is a part of a [series of blog posts](TODO: link to tag for exploring-dagger) that look at Dagger from different perspectives.
 
 **NOTE**: Dagger is in very active development so by the time you read this blog post it might already be deprecated.
 
@@ -39,9 +41,68 @@ This process will utilize two operations pulumi provides:
 * `preview`: show a diff of the changes that _would_ be applied.
 * `up`: apply the requested changes.
 
-We are going to build this workflow using Dagger and Pulumi's CLI and show how this differentiates from a traditional pipeline built with a CI specific tool such as Github actions. I will explore both the ["traditional" dagger client](#using-the-dagger-client) as well as the use of [dagger modules](#using-dagger-modules).
+We are going to build this workflow using Github actions first to understand how the current "status quo" works when it comes to building this types of pipelines. Then, we will build this same solution using Dagger. There is currently two ways of building this with Dagger: i) using the ["traditional" dagger client](#using-the-dagger-client); and ii) using the newer concept of [Dagger modules](#using-dagger-modules).
+
+## Using Github actions
+
+TODO: 
+* Show how to run the commands locally and what we need to put in production 
+* Refer to Github's marketplace as the core thing that makes this thing actually easy so that we can then talk about dagger modules with an ecosystem already provided.
+* Explain how this will change with each specific CI, show an example with something like CircleCI.
+* Explain how this is not easily testeable locally, maybe even try testing it with arc or gale?
+
+Everything below here is wip:
+
+To have a better understanding of whether Dagger gave us a better experience and how it conceptually differentiates from traditional CIs we have to at least implement this process using github actions. We could have leveraged a github action implemented by the Pulumi team to do this preview/up process with github comments included:
+```yaml
+name: Pulumi
+on:
+  - pull_request
+jobs:
+  preview:
+    name: Preview
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 'stable'
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - run: go mod download
+      - uses: pulumi/actions@v3
+        with:
+          command: preview
+          stack-name: org-name/stack-name
+          comment-on-pr: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+```
+
+There are two main differences that I see with this implementation. First of all, this is not easily testable and extensible. We could leverage something like [arc]() or [gale]() to run this process locally, but when it comes to extending we would either have to build custom actions or do some setup magic and run custom scripts on top of this yaml. Again, this is a simple process, but CI/CD often gets more complicated as time goes on. And while right now this may not seem like an obvious problem, it always ends up becoming that critical yaml file that nobody wants to touch. The second main difference is more "conceptual" but it is important to point out because it requires a mindset shift when it comes to building CI. In the traditional pipeline, we can see a "statefull" approach, where each of the steps that are being executed are doing explicit things on the host (i.e the runner) that the subsequent action then reuses:
+1. Checkout the code of the repository
+2. Install the latest stable version of Go
+3. Configure AWS's credentials (technically not needed, we could use env variables directly...)
+4. Download go dependencies that pulumi's code uses.
+5. Run pulumi preview
+
+Every single one of those actions changed the underlying host in some way and left a state that the subsequent action would then use. This means that when you build a workflow you always operate directly on the host instead of "chaining" inputs/outputs like you do when building a dag, for example an Airflow dag. I don't particularly like this approach, it is one of the main things that makes this processed hard to test and more importantly very hard to understand.
+
+With dagger modules we saw a different approach. When we were calling the function of the module, we had to explicitly provide all the required resources to perform the `preview` or `up` operation. This is because, as we mentioned previously, dagger functions run in a sandboxed environment that could even be executed on a different host! This, in my opinion, opens up interesting possibilities for building CI pipelines using reusable APIs that are deployed once and used everywhere. There might be occasions where this stateless approach falls short, but this new approach is only getting started. I think there is a lot of similarity with how the data world works. When you build data pipelines using tools like Airflow, the worker where the operator code gets executed usually only performs HTTP calls. For example, if you build a data pipeline that performs some data transformation using spark on EMR and then ingests that data on a datasource like clickhouse, your Airflow DAG will probably look something like this:
+1. Use EMR Operator to execute some spark code. Airflow's worker will call AWS's API, ask for a given script to be executed and then wait for completion.
+2. Use an ECS task or similar to run code that reads the data from S3 and ingest it into clickhouse.
+
 ## Using the Dagger client
-As was mentioned previously our CI process will have two separate workflows for:
+
+TODO:
+* Short intro to this approach and then jump into this explanation
+
+As was shown previously our CI process has two separate workflows for:
 * **Previewing changes**: used when a PR is created against `main` to execute `pulumi preview` and show the diff as a comment on the pull request.
 * **Applying changes**: used when a commit is pushed to `main` to run `pulumi up` and apply the desired changes.
 
@@ -223,6 +284,9 @@ jobs:
 
 Other than "plugging" things together (env variables in this case) there is nothing special about this pipeline, all the important logic is hidden away inside our Dagger program.
 
+TODO:
+* Explain about the `with-comment` functionality that we had in the github actions thing and that we should implement it here.
+
 Now we want to make the pipeline a bit more interesting. The diff that was calculated previously should be posted to the PR as a comment so that whoever is reviewing it can look at the PR comments and see what is being changed. This is where Dagger, being a code-first solution, really shines. We can extend our Go program using Github's SDK to communicate with it's API and post the comment with the output of the command. Lets change our `preview` code to include this:
 ```go
 	// ...
@@ -315,10 +379,17 @@ jobs:
         run: dagger run go run ./ci up -stack=ninjastructure/prod
 ```
 
+TODO:
+* Explain what things sucked about about this and which parts where interesting with reference to the SDK. But be honest that this require a lot of work and the benefits for such a simple pipeline are not super clear.
+
 And we are done! We now have a pipeline that performs `preview` operations on PRs and leaves a comment showing the diff of what is going to be changed and an `up` operation on new commits in the main branch that will be apply changes to the infra directly. If you want to integrate this process with more tools, for example sending a message on Slack after changes have been applied you could use Slack's SDK or communicate with Slack's API directly using Go's standard library.
 ## Using Dagger modules
 
-Using the Dagger client was quite straightforward, however, we had to manually build some form of "CLI". Parse arguments and flags and manage the logic of what the user is trying to call. The way I built it is not very "expressive" either, in order to understand what this CLI can do you would have to read the code. It wasn't that big of a deal given how simple the process is. But as this processes get more complicated (for example orchestrating apply commands on multiple environments based on specific conditions and files changed) the CLI will get more complicated and more parameterized and become less expressive overtime. 
+TODO:
+* Refactor this section to assume that the Github actions stuff was already mentioned
+* Talk about the pulumi module not being developed so show how we would implement said module
+
+Using the Dagger client was quite straightforward, however, we had to manually build some form of "CLI" and re-implement logic that Github actions. Parse arguments and flags and manage the logic of what the user is trying to call. The way I built it is not very "expressive" either, in order to understand what this CLI can do you would have to read the code. It wasn't that big of a deal given how simple the process is. But as this processes get more complicated (for example orchestrating apply commands on multiple environments based on specific conditions and files changed) the CLI will get more complicated and more parameterized and become less expressive overtime. 
 
 The process we built is also not reusable. If somebody else is using pulumi as well and wants to apply this or a similar process they have to rebuild the whole thing from scratch. If you were building this using github actions, you would probably reuse an action that somebody else developed that has the functionality you need. So, how can we achieve this with Dagger? This is where [Dagger modules](https://daggerverse.dev) come in. Dagger modules allow us to encapsulate specific tasks (and even entire workflows) into functions that are written in one of the supported programming languages. The interesting bit is that Dagger then packages this functions into a GraphQL API that can be queried from any other language. This means that with modules you can essentially build a cross-language ecosystem of tasks and workflows that can be used by anybody. All you have to do is browse the [daggerverse](https://daggerverse.dev), find the module you are interested it and call those functions from your code base. This is all very exciting, now lets implement this same process using modules. We are still going to use Go's SDK because here we love Go. We first have to initialize the module, same as before we'll use the CI folder:
 ```sh
@@ -508,8 +579,15 @@ $ dagger -m ./ci call preview --src "." --stack "ninjastructure/prod" --reposito
 
 Running this in the CI process requires us to modify the github workflow and execute this exact same command specifying the credentials and environment variables available on the CI runner.
 
+TODO:
+* Refactor the conclusion of this section based on the TODO I wrote before
+
 I believe this is a more expressive way of building CI systems. In the next section we will build this using native github actions and do a comparison of Dagger vs traditional CIs.
-## Comparing Dagger to traditional CI solutions
+
+## Comparisson
+
+TODO:
+* Write this section in a way that honestly compares the two and talks about where things felt short with Dagger
 
 To have a better understanding of whether Dagger gave us a better experience and how it conceptually differentiates from traditional CIs we have to at least implement this process using github actions. We could have leveraged a github action implemented by the Pulumi team to do this preview/up process with github comments included:
 ```yaml
@@ -556,4 +634,7 @@ With dagger modules we saw a different approach. When we were calling the functi
 2. Use an ECS task or similar to run code that reads the data from S3 and ingest it into clickhouse.
 
 ## Conclusion
+TODO:
+* Have a hard and honest conclusion with the promise that Dagger shows but be honest where the rough edges are
+
 Dagger offers a compelling alternative to yaml and custom scripts in CI/CD pipelines. By leveraging code, we gain expressiveness, reusability, and the ability to integrate with a wide range of tools and services. As Dagger matures, I'm excited to see how it will continue to evolve and improve CI/CD practices.
