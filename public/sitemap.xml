@@ -11,6 +11,12 @@
     <loc>https://blog.matiaspan.dev/tags/dagger/</loc>
     <lastmod>2023-11-07T00:00:00-03:00</lastmod>
   </url><url>
+    <loc>https://blog.matiaspan.dev/posts/exploring-dagger-building-a-ci-cd-pipeline-for-iac/</loc>
+    <lastmod>2023-11-07T00:00:00-03:00</lastmod>
+  </url><url>
+    <loc>https://blog.matiaspan.dev/tags/exploring-dagger/</loc>
+    <lastmod>2023-11-07T00:00:00-03:00</lastmod>
+  </url><url>
     <loc>https://blog.matiaspan.dev/tags/go/</loc>
     <lastmod>2023-11-07T00:00:00-03:00</lastmod>
   </url><url>
@@ -24,9 +30,6 @@
     <lastmod>2023-11-07T00:00:00-03:00</lastmod>
   </url><url>
     <loc>https://blog.matiaspan.dev/tags/pulumi/</loc>
-    <lastmod>2023-11-07T00:00:00-03:00</lastmod>
-  </url><url>
-    <loc>https://blog.matiaspan.dev/posts/streamlining-ci-cd-with-dagger-beyond-yaml/</loc>
     <lastmod>2023-11-07T00:00:00-03:00</lastmod>
   </url><url>
     <loc>https://blog.matiaspan.dev/tags/</loc>
