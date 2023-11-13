@@ -533,7 +533,7 @@ Since we are writing Go, any variable or function that starts with an Uppercase 
 
 We can test this module locally with my IaC repository. For example the `Preview` operation:
 ```sh
-dagger -m github.com/matipan/daggerverse/pulumi call with-aws-credentials --aws-access-key "<AWS_ACCESS_KEY_ID>" --aws-secret-key "<AWS_SECRET_ACCESS_KEY>" with-pulumi-token --pulumi-token "<PULUMI_ACCESS_TOKEN"" preview --src "." --stack "<PULUMI_STACK>"
+dagger -m github.com/matipan/daggerverse/pulumi call with-aws-credentials --aws-access-key "<AWS_ACCESS_KEY_ID>" --aws-secret-key "<AWS_SECRET_ACCESS_KEY>" with-pulumi-token --pulumi-token "<PULUMI_ACCESS_TOKEN>" preview --src "." --stack "<PULUMI_STACK>"
 ```
 
 And the output:
