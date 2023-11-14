@@ -117,7 +117,7 @@ The `up` workflow would be very similar to this one with the small change of rem
 
 Given the simplicity of this workflow I don't have much to complain about. The two things I personally did not like where:
 * *Developing it*: seems like a shallow complaint, but I personally do not like the "development experience" that YAML gives you. Understanding which parameters the action accepted required me to look at a README on the action's repo and one trial and error.
-* *Testing*: it is not easy to validate this workflows locally. You could use a custom tool such as [act](https://github.com/nektos/act) but it is quite heavy to test all of it locally.
+* *Testing*: it is not easy to validate this workflows locally. You could use a custom tool such as [act](https://github.com/nektos/act) but it does not offer a good DX and it is often quite heavy.
 
 It is true that as the CI process evolves and gets more complicated this two things become more problematic. But for this simple use case it was not too bad.
 
@@ -154,11 +154,11 @@ We can run this with `go run` or with Dagger's CLI that shows us a detailed outp
 
 ![screenshot of a terminal showing a DAG of operations that was performed by the Dagger engine](/images/dagger-run-example.png)
 
-Internally the Dagger engine is leveraging [BuildKit](https://github.com/moby/buildkit) to perform all the operations we ask for. This means that we can run this code this way on any machine and it will have the same result. You could use this SDK to replace Dockerfiles entirely but for now we'll focus on our IaC pipeline.
+Internally the Dagger engine is leveraging [BuildKit](https://github.com/moby/buildkit) to perform all the operations we ask for. This means that this code we wrote will on any machine and produce the same result. You could use this SDK to replace Dockerfiles entirely but for now we'll focus on our IaC pipeline.
 
 ### Building our CI
 
-Let's start by writing the Dagger program that will perform both operations. Now, given that we need to support two operations (and both need the same flag) we need this program to manage arguments and execute different code based on those. Let's rewrite our `main.go` to support that:
+Let's start by writing the Dagger program. Now, given that we need to support two operations (and both need the same flag) we need this program to manage arguments and execute different code based on those. Let's rewrite our `main.go` to support that:
 ```go
 // ...
 var stack = flag.Parse("stack", "prod", "pulumi stack to use")
@@ -209,7 +209,7 @@ In this `baseContainer` function we are building and returning a container that:
 * Has the infrastructure code mounted in the working directory `/infra` and
 * has all the go dependencies that our pulumi code requires.
 
-This container can now be used to execute pulumi commands. To run the preview operation we can:
+This container can now be used to execute pulumi commands:
 ```go
 // ...
 func main() {
@@ -231,7 +231,7 @@ func main() {
 }
 ```
 
-We are now ready to try it out! To run Dagger you can either: i) use Dagger's CLI to get a pretty output of what dagger is doing exactly (`dagger run go run ./ci preview --stack prod`); ii) or run go directly and get a silent output (`go run ./ci preview --stack prod`). Running this locally using Dagger's CLI shows a lot of output, so I'll show here only the relevant pulumi bits:
+Running this locally using Dagger's CLI shows a lot of output, so I'll show here only the relevant pulumi bits:
 ```
 ┃ @ Previewing update.....
 ┃ @ Previewing update.....
@@ -282,7 +282,7 @@ We are now ready to try it out! To run Dagger you can either: i) use Dagger's CL
 ┃     2 changes. 59 unchanged
 ```
 
-You probably already saw a big difference in how CI gets built with Dagger. We first developed the code that performs the operations we want and tested it locally instead of writing a YAML and pushing it to the repo to test it. Now to be able to run this in the CI environment we do actually have to write some YAML (maybe [Dagger cloud](https://dagger.io/cloud) will fix that some day? 👀) for the actual github workflow:
+You probably already saw a big difference in how CI gets built with Dagger. We first developed the code that performs the operations we want and tested it locally instead of writing a YAML and pushing it to the repo to test it. To run this in Github's CI environment we, unfortunately, have to write some YAML (maybe [Dagger cloud](https://dagger.io/cloud) will fix that some day? 👀):
 ```yaml
 name: preview
 
@@ -372,8 +372,8 @@ While this example in particular is rather simple, imagine how this process get 
 
 ### Intro
 
-Dagger modules is a brand new thing the Dagger team implemented to address some of the problems we mentioned previously. The two that we will focus on here are:
-* *Re-usability*: with the Dagger SDK we built a program that can run pulumi commands, however, this is not re-usable by myself or any other person that might need to do this same thing.
+Dagger modules is, at the time of this writing, a brand new concept the Dagger team implemented to address some of the problems we mentioned previously. The two that we will focus on here are:
+* *Re-usability*: with the Dagger SDK we built a program that can run pulumi commands, but it is not re-usable by myself or any other person that might need to do this same thing.
 * *Declarative Interface*: our Go program is very "raw" when it comes to declaring its API. If you want to understand what is the "API" of this CLI, you have to look at the code, see the `switch` statement and notice that we support `up` and `preview` as valid values.
 
 When it comes to re-usability the first thing we need to understand is: how can we make what we built available to the world? Similar to how the Github marketplace allows us to browse all available actions, the [Daggerverse](http://daggerverse.dev/) (still in very early stages) allows us to browse all modules that were developed and published by someone. For example, here is a module that someone (👀) built to run `gradle` tasks:
@@ -384,7 +384,7 @@ To understand the API that this module has we can use Dagger's CLI and run `dagg
 
 ![a terminal showing all the operations and their arguments that the Gradle module supports](/images/dagger-functions.png)
 
-The most interesting bit for me is that you can call out other Dagger modules from your own no matter the programming language it was used to build it. For example, the `gradle` module was built using Go but we can call the `gradle.Build` function from another Dagger module built with Python:
+The most interesting bit for me is that you can call other Dagger modules from your own no matter the programming language they are using. For example, the `gradle` module was built using Go but we can call the `gradle.Build` function from another Dagger module built with Python:
 ```python
 import dagger
 from dagger.mod import function
@@ -394,13 +394,13 @@ def build() -> dagger.Container:
     return dagger.gradle().build()
 ```
 
-We can call this function on our local module and see that it indeeds uses the Gradle module to perform a build (it failed because, fortunately, we are not in a directory with a Gradel service):
+When we call this function on our module and we can see that it indeeds uses the Gradle module to perform a build (it failed because, fortunately, we are not writing Java):
 
 ![the output of the dagger call build command that failed to build a Gradle service](/images/gradle-build.png)
 
 ### Building our CI
 
-Since Dagger modules can be reused and we can find all modules in the Daggerverse lets see if someone already built for us a Pulumi module:
+Since Dagger modules can be reused and we can find all modules in the Daggerverse lets see if someone already built a Pulumi module:
 
 ![the Daggerverse website showing that there is no module for pulumi](/images/pulumi-not-found.png)
 
@@ -525,8 +525,8 @@ func container(src *Directory, pulumiToken *Secret, version string) *Container {
 }
 ```
 
-Since we are writing Go, any variable or function that starts with an Uppercase letter will be part of the interface of this module and developers will see it when calling `dagger functions` for this module. A few things worth pointing out of what we build here:
-* There are 2 public functions (`WithAwsCredentials` and `WithPulumiToken`) that set the credentials for what we want to do and need to be called before our operation. See how they do not return any parameters meaning they do not execute anything specific and require a sub command to function. If you want support for your cloud provider you are welcome to make a [PR](https://github.com/matipan/daggerverse) 🚀.
+Since we are writing Go, any variable or function that starts with an Uppercase letter will be part of the interface of this module and developers will see it when calling `dagger functions`. A few things worth pointing out of this code:
+* There are 2 public functions (`WithAwsCredentials` and `WithPulumiToken`) that set the credentials for what we want to do and need to be called before our operation. See how they return a reference to the module itself, in Dagger-lang this means that in order for something to happen they require a subcommand (like `up`). If you want support for your cloud provider you are welcome to make a [PR](https://github.com/matipan/daggerverse) 🚀.
 * The `Up` function returns a string and an error, indicating the output of the pulumi command and an error if there was any.
 * The `authenticatedContainer` function is where the magic happens. This function is private and is used to create a container that has the required credentials and dependencies.
 * Users of the module can point to a specific version of pulumi using `FromVersion` and if they don't we default to `latest`.
@@ -544,11 +544,11 @@ You can see all the operations this module supports by running `dagger -m github
 
 #### Building our CI re-using modules
 
-Now when we look for the `pulumi` module in the Daggerverse we see that it is already built and we get super excited:
+When now can see in the Daggerverse that there is a `pulumi` module we can leverage:
 
 ![the Daggerverse website showing the `pulumi` in the search box and one result](/images/pulumi-module-found.png)
 
-This module takes care of the IaC part but for the case of pull requests we wanted to post a comment showing the diff that was generated and I don't see support for this. Luckily, someone (thanks [@aweris](https://github.com/aweris)) already built a [Dagger module](https://daggerverse.dev/mod/github.com/aweris/daggerverse/gh@1c14645e0139a4ca73969bc9314069d8e6d3b18b) that allows developers to run any command of the `gh` CLI. This means we could run `gh pr comment <PR> --body "<contents>"` from our Dagger code and pass the output that the Pulumi module gave us.
+This module takes care of the IaC part but for the case of pull requests we wanted to post a comment showing the diff that was generated. Luckily, someone (thanks [@aweris](https://github.com/aweris)) already built a [Dagger module](https://daggerverse.dev/mod/github.com/aweris/daggerverse/gh@1c14645e0139a4ca73969bc9314069d8e6d3b18b) that allows developers to run any command of the `gh` CLI. This means we could run `gh pr comment <PR> --body '<contents>'` from our Dagger code and pass the output that the Pulumi module gave us.
 
 To get started writing our CI we will create a new "module" that has the operations our workflow requires. For simplicity we will call them `preview` and `up` as well. We'll use Go since we kind of love it here (but remember that with Dagger it does not matter in what language a given module was built):
 ```sh
@@ -561,7 +561,7 @@ dagger mod use github.com/matipan/daggerverse/pulumi
 dagger mod use github.com/aweris/daggerverse/gh
 ```
 
-And quickly build our module with the `Preview` function that calls the Pulumi module and creates a PR with the output of the diff:
+And quickly build our module with the `Preview` function that uses these dependencies:
 ```go
 type Iac struct {
 	AwsAccessKey *Secret
@@ -590,13 +590,12 @@ func (m *Iac) Preview(ctx context.Context, src *Directory, stack string, githubT
 		return fmt.Errorf("githubRef did not have the correct format, expected: refs/pull/:prNumber/merge. Got: %s", githubRef)
 	}
 
-	_, err = dag.Gh().Run(ctx, githubToken, fmt.Sprintf(`pr comment %d --body "%s"`, pr, diff))
+	_, err = dag.Gh().Run(ctx, githubToken, fmt.Sprintf("pr comment %d --body '%s'", pr, diff))
 	return err
 }
 ```
 
-You can see that we are calling the `Pulumi` module Preview operation and then sending the output of it to the `gh` module so that it posts the comment on Github. To refactor our Github workflow to use this we need to call our module instead:
-
+You can see that we are calling the `Pulumi` module Preview operation and then sending the output of it to the `gh` module so that it posts the comment on Github. Our Github workflow will now call our module instead:
 ```yaml
 name: 'preview'
 
@@ -632,13 +631,15 @@ The dagger command that was specified in the last step can be run locally which 
 
 ### Thoughts
 
-As you can see at the time of this writing the Daggerverse is quite new and does not have many modules already provided. This required us to build the module to interact with Pulumi. However, we were able to find a module that provided us with the capacity to post a comment on the PR that was open. Once we had these dependencies ready to go it was just a matter of referencing them and piping things together, all with code using the programming language I preferred. With the wiring of those modules taken care of it was just a matter of using Dagger's CLI to call our module and perform the operations we wanted. The same command we run locally to test that everything worked correctly was then added to the CI process to finish the entire workflow. If we ever were to migrate from Github actions to say, CircleCI, then it would be a matter of referencing this same command from our CircleCI workflow and that's it. Work is done.
+As you can see at the time of this writing the Daggerverse is quite new and does not have many modules already provided. This required us to build the module to interact with Pulumi. However, we were able to find a module that provided us with the capacity to post a comment on the PR that was open. Once we had these dependencies ready to go it was just a matter of referencing them and piping things together, all with code using the programming language I preferred. With the wiring of those modules taken care of it was just a matter of using Dagger's CLI to call our module and perform the operations we wanted. The same command we run locally to test that everything worked correctly was then added to the CI process to finish the entire workflow. If we ever were to migrate from Github actions to say, CircleCI, then it would be a matter of referencing this same command from our CircleCI workflow and that's it.
 
 The main problem I see with this approach today has to do with caching. Every single operation can potentially be cached and save us from having to recreate the entire environment every time. To achieve this with Dagger we would have to either: i) use the paid offering that provides this caching called [Dagger cloud](https://dagger.io/cloud); ii) deploying a dagger engine with caching in your own infrastructure and point your CI runners to use that version of the engine. That approach is not too bad for simpler use cases, but as soon as you need to scale you'll require multiple instances running.
 
+As a side note, when we wanted to create our pipeline we had to create a new "module" that was the entrypoint for our CI. This is because the only way to use other modules today is from within another module. I found this a bit confusing. In programming languages such as Go you can create either libraries or executables. When I hear the word "module" I think of a library that requires an executable to call it and do something. Maybe it's just a naming thing or maybe I get easily confused.
+
 ## Comparison
 
-When comparing the approach of Github actions and Dagger modules I find two main differences. First of all, Github actions does not give us a process that can be easily testable and extensible. When it comes to extending we would either have to build custom actions or do some setup magic and run custom scripts on top of this yaml. Again, this is a simple process, but CI/CD often gets more complicated as time goes on. And while right now this may not seem like an obvious problem, it always ends up becoming that critical yaml file that nobody wants to touch. The second difference is of a "conceptual" difference, but it's important to point it out because it requires a mindset shift when it comes to building CI. In the traditional pipeline we can see a "stateful" approach where each of the steps that are being executed are doing explicit things on the host (i.e the runner) that the subsequent action then reuses:
+When comparing the approach of Github actions and Dagger modules I find two main differences. First of all, Github actions does not give us a process that can be easily testable and extensible. When it comes to extending we would either have to build custom actions or do some setup magic and run custom scripts on top of this yaml. Again, this is a simple process, but CI/CD often gets more complicated as time goes on. And while right now this may not seem like an obvious problem, it always ends up becoming that critical yaml file that nobody wants to touch. The second difference is more "conceptual", but it's important to point it out because it requires a mindset shift when it comes to building CI. In the traditional pipeline we can see a "stateful" approach where each of the steps that are being executed are doing explicit things on the host (i.e the runner) that the subsequent action then reuses:
 1. Checkout the code of the repository
 2. Install the latest stable version of Go
 3. Configure AWS's credentials (technically not needed, we could use env variables directly...)
@@ -653,4 +654,4 @@ With dagger modules we saw a different approach. When we were calling a module w
 
 ## Conclusion
 
-I believe Dagger offers a compelling alternative to yaml and custom scripts in CI/CD pipelines. By leveraging code, we gain expressiveness, reusability, and the ability to integrate with a wide range of tools and services. As Dagger matures, I'm excited to see how it will continue to evolve and improve CI/CD practices. I don't believe the current experience explained in this blog post is compelling enough to justify using Dagger for any kind of pipeline. But I think there are very interesting primitives that will allow us to develop the best experience possible.
+I believe Dagger offers a compelling alternative to yaml and custom scripts in CI/CD pipelines. By leveraging code, we gain expressiveness, reusability, and the ability to integrate with a wide range of tools and services. As Dagger matures, I'm excited to see how it will continue to evolve and improve CI/CD practices. However, the current state of the art of Dagger requires a big mindset shift and, while it does offer important benefits, for simpler use cases like the one explored in this blog post the learning curve seems to be a bit steep. I think that in this post we found very interesting primitives that will probably allow us to develop a better experience for all use cases.
