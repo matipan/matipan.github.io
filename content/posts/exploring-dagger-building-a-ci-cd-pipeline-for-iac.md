@@ -1,6 +1,6 @@
 ---
 title: "Exploring Dagger: Building a CI/CD pipeline for IaC"
-date: 2023-11-07T00:00:00-03:00
+date: 2023-11-13T00:00:00-03:00
 tags: ["pulumi", "go", "aws", "dagger", "ci/cd", "exploring-dagger"]
 categories: ["infrastructure"]
 showToc: true

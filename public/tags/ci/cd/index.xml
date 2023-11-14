@@ -9,7 +9,7 @@
     <item>
       <title>Exploring Dagger: Building a CI/CD pipeline for IaC</title>
       <link>https://blog.matiaspan.dev/posts/exploring-dagger-building-a-ci-cd-pipeline-for-iac/</link>
-      <pubDate>Tue, 07 Nov 2023 00:00:00 -0300</pubDate>
+      <pubDate>Mon, 13 Nov 2023 00:00:00 -0300</pubDate>
       
       <guid>https://blog.matiaspan.dev/posts/exploring-dagger-building-a-ci-cd-pipeline-for-iac/</guid>
       <description>Dagger is a new tool that promises to fix the yaml and custom scripts mess that CI/CD currently is by building pipelines as code with one of the supported SDKs. I&amp;rsquo;m in the process of learning this tool, understanding where it may fall short and where it shines and I decided that sharing some of the exploration I do and the learnings it leaves me with would be useful. This is the first post in a series of blog posts that look at Dagger from different perspectives.</description>
