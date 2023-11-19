@@ -7,6 +7,15 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language><atom:link href="https://blog.matiaspan.dev/tags/ci/cd/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Exploring Dagger: Streamlining CI/CD Pipelines with Code – A Developer&#39;s Guide</title>
+      <link>https://blog.matiaspan.dev/posts/exploring-dagger-streamlining-ci-cd-pipelines-with-code/</link>
+      <pubDate>Sun, 19 Nov 2023 00:00:00 -0300</pubDate>
+      
+      <guid>https://blog.matiaspan.dev/posts/exploring-dagger-streamlining-ci-cd-pipelines-with-code/</guid>
+      <description>This is the second post in a series of blog posts that look at Dagger from different perspectives. In this post we do a deep dive on how to leverage Dagger as a developer that is tasked with implementing the CI process of a Java-Gradle service. In this CI process we need to: build, run integration tests with external dependencies and package the service. We will leave the CD part for a future blog post that looks at Dagger from the perspective of a Platform Engineer/SRE.</description>
+    </item>
+    
+    <item>
       <title>Exploring Dagger: Building a CI/CD pipeline for IaC</title>
       <link>https://blog.matiaspan.dev/posts/exploring-dagger-building-a-ci-cd-pipeline-for-iac/</link>
       <pubDate>Mon, 13 Nov 2023 00:00:00 -0300</pubDate>

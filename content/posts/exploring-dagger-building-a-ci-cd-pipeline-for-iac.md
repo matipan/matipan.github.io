@@ -26,7 +26,7 @@ editPost:
 
 [Dagger](https://dagger.io/) is a new tool that promises to fix the yaml and custom scripts mess that CI/CD currently is by building pipelines as code with one of the [supported SDKs](https://docs.dagger.io/). I'm in the process of learning this tool, understanding where it may fall short and where it shines and I decided that sharing some of the exploration I do and the learnings it leaves me with would be useful. This is the first post in a [series of blog posts](https://blog.matiaspan.dev/tags/exploring-dagger/) that look at Dagger from different perspectives. In this post I do a deep dive on how to build a pipeline for an IaC repository. I explore building this using "native" Github actions, the Dagger client and the newer approach of Dagger modules.
 
-**NOTE**: Dagger is in very active development so by the time you read this blog post it might already be deprecated.
+**NOTE**: Dagger is in very active development so by the time you read this blog post some things might have changed.
 
 ## Background
 We have a repository that holds all of our infrastructure in a declarative way using [Pulumi's](https://www.pulumi.com/) Go SDK. Every time we want to provision, change or delete some infrastructure we need to:
