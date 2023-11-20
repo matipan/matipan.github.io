@@ -501,7 +501,7 @@ Now we can use the `up` command to start the service and its dependencies locall
 
 Dagger makes sure that the services are healthy before they connect to each other. All this runs in containers isolated in their own environments. This means that we can run this same command in other machines and expect it will work correctly.
 
-To run the integration tests we can create a function that leverages the concept of services and the fact that the entire definition of the containers are in this same codebase. We can create a container from a specific go version and create a service binding to the service itself:
+To run the integration tests using Dagger we can choose one of two approaches: i) containerize the execution of integration tests and define it as a service connected to the others; ii) take advantage that tests are written in Go and simply call out to them as a library. Implementing the first one is quite straightfoward, we simply define a new function that uses the `Go` module from the Daggerverse and creates a container that is connected to the service:
 ```go
 func (m *GradleService) IntegrationTests(ctx context.Context, tests *Directory, sqlInitDB *File) (string, error) {
 	return dag.Go().
@@ -517,6 +517,34 @@ func (m *GradleService) IntegrationTests(ctx context.Context, tests *Directory, 
 In this function we expect to receive the directory that holds the tests, the database file used to seed the db and we return the output that the command generates. We can now use dagger's CLI to call this function and run the integration tests, all containerized and defined within a single codebase:
 
 ![output of dagger showing the tests succeeded](/images/integration-tests-cmd.png)
+
+The second approach is interesting to explore. Since our tests are written in Go, we could technically just import them as a library and execute that Go code from within the execution context of our module. Since that is also containerized, it is still re-usable. To be able to do this we would have to move the code of our tests inside the `ci` folder, since it is a go module, import it from our module and call the function that runs the tests:
+```go
+import "main/test/orderlist"
+
+...
+
+func (m *GradleService) IntegrationTests(ctx context.Context, sqlInitDB *File) error {
+	svc, err := dag.Host().Tunnel(m.Service(ctx, sqlInitDB)).Start(ctx)
+	if err != nil {
+		return err
+	}
+	defer svc.Stop(ctx)
+
+	endpoint, err := svc.Endpoint(ctx)
+	if err != nil {
+		return err
+	}
+
+	return orderlist.Test(endpoint)
+}
+```
+
+In this code we are importing the tests as a library, starting the service and the MySQL database, opening up a tunnel from the container of the service to the container our module is running on and then use the created endpoint to run the tests (the warning messages are from the `Stop` function, we can ignore them):
+
+![screenshot showing the tests running successfully](/images/integration-tests-integrated.png)
+
+I wanted to show both approaches since you might prefer to write your integration tests using a different language to the one used by your Dagger module. If this is the case, you can use the first approach of containerizing and executing a command there.
 
 ### Building our CI workflow
 Let's put all of this together in our CI workflow. This is where Dagger shines in my opinion. We don't have to do anything special to make sure this works in our CI environment. We just need to install the dagger CLI and run the exact same command developers run locally:
