@@ -24,7 +24,7 @@ editPost:
     appendFilePath: true
 ---
 
-This is the second post in a [series of blog posts](https://blog.matiaspan.dev/tags/exploring-dagger/) that look at Dagger from different perspectives. In this post we do a deep dive on how to leverage Dagger as a developer that is tasked with implementing the CI process of a Java-Gradle service. In this CI process we need to: build, run integration tests with external dependencies and package the service. We will leave the CD part for a future blog post that looks at Dagger from the perspective of a Platform Engineer/SRE. We are going to build this with traditional tools like docker-compose and with Dagger modules and then compare the two approaches.
+This is the second post in a [series of blog posts](https://blog.matiaspan.dev/tags/exploring-dagger/) that look at Dagger from different perspectives. In this post we do a deep dive on how to leverage Dagger as a developer that is tasked with implementing the CI process of a Java-Gradle service. In this CI process we need to: build, run end to end tests with external dependencies and package the service. We will leave the CD part for a future blog post that looks at Dagger from the perspective of a Platform Engineer/SRE. We are going to build this with traditional tools like docker-compose and with Dagger modules and then compare the two approaches.
 
 **NOTE**: Dagger is in very active development so by the time you read this blog post some things might have changed.
 
@@ -53,7 +53,7 @@ GET /orders?page=1&status=open&shipping_method=43123
 }
 ```
 
-The service has not yet reached production but we know this endpoint will be very critical. It has to be consistent, meaning that if I specify `status=open` as a filter, it should only return orders that match that status. If we break this constraint we are going to be in big trouble. To guarantee that we never merge or deploy code that breaks this constraint we decide is best to build a few black-box integration tests that validate the behavior of the entire system. We are going to start our service and its dependencies and execute a program that makes HTTP requests with different filters and validates that the responses match what we expect. We want developers to be able to run this tests locally but we also want to make them a hard constraint on our CI, so we need to run them there as well. For the sake of keeping this blog post focused on the CI part, I'll share just a snippet of what this integration tests look like. In our repository we created a `tests` folder and wrote a `main.go` file that does what we just mentioned. Here is a snippet of what this program looks like:
+The service has not yet reached production but we know this endpoint will be very critical. It has to be consistent, meaning that if I specify `status=open` as a filter, it should only return orders that match that status. If we break this constraint we are going to be in big trouble. To guarantee that we never merge or deploy code that breaks this constraint we decide is best to build a few black-box end to end tests that validate the behavior of the entire system. We are going to start our service and its dependencies and execute a program that makes HTTP requests with different filters and validates that the responses match what we expect. We want developers to be able to run this tests locally but we also want to make them a hard constraint on our CI, so we need to run them there as well. For the sake of keeping this blog post focused on the CI part, I'll share just a snippet of what this end to end tests look like. In our repository we created a `tests` folder and wrote a `main.go` file that does what we just mentioned. Here is a snippet of what this program looks like:
 ```go
 var endpoint = flag.String("endpoint", "localhost:8080", "service endpoint")
 
@@ -130,7 +130,7 @@ With this program developers can start their local environment and run `go run .
 In summary, we want to build a reproducible way to:
 * build and package our service
 * run unit tests
-* run integration tests that require the service and its dependencies to be running
+* run end to end tests that require the service and its dependencies to be running
 
 So that we can then build a CI process that integrates all of it.
 
@@ -192,7 +192,7 @@ docker run -e APP_PROFILE=test gradle-service-base ./gradlew clean test
 
 With this approach we were able to containerize our build and test so that these processes run in the exact same way on all machines. Something I've seen quite frequently, specially in the Java ecosystem, is that developers usually run build and test commands in their CI workflows by re-using whatever abstraction the CI runtime provides. For example, in the case of Github workflows I've seen people often use the [gradle action](https://github.com/gradle/gradle-build-action) to run gradle commands directly in their CI. What usually ends up happening is that the action sets things up in a different way and then tests end up failing in the CI but not in the local environment of the developer. Leaving people confused and forced to ignore the tests in that PR because who has time to debug the CI?
 
-Now for the interesting part: integration tests. We mentioned previously that our service uses MySQL to store and retrieve the orders it is requested. To be able to run this integration tests we need to have MySQL running and the service connected to it. Since we want this to be reproducible and run in our CI as well we will leverage docker-compose:
+Now for the interesting part: end to end tests. We mentioned previously that our service uses MySQL to store and retrieve the orders it is requested. To be able to run these tests we need to have MySQL running and the service connected to it. Since we want this to be reproducible and run in our CI as well we will leverage docker-compose:
 ```yaml
 version: '3.9'
 
@@ -239,7 +239,7 @@ Let's quickly go over what this docker-compose file has:
 
 We can now start our services locally and in any other environment by running `docker-compose up`.
 
-Time to add our integration tests. We also want these tests to be able to run in any host without requiring that host to have dependencies installed (other than the ability to run containers of course). For this reason we start writing a `Dockerfile` inside our tests folder:
+Time to add our tests. We also want these tests to be able to run in any host without requiring that host to have dependencies installed (other than the ability to run containers of course). For this reason we start writing a `Dockerfile` inside our tests folder:
 ```dockerfile
 FROM golang:1.21-alpine
 
@@ -273,7 +273,7 @@ We are now ready to build our Github workflow that re-uses what we built here.
 I won't go over too much detail here on the syntax for Github workflows. We want our workflow to run only on pull requests that are made against our main branch and we want it to:
 * Run unit tests
 * Build the service
-* Run integration tests
+* Run end to end tests
 
 As we saw previously, building the sevice already happens when we do a `docker-compose up` so we only need to take care of the other two:
 ```yaml
@@ -298,7 +298,7 @@ jobs:
       run: docker-compose up -d
     - name: Check service health
       run: ./tests/check_health.sh
-    - name: Run integration tests
+    - name: Run end to end tests
       working-directory: tests
       run: docker build -t tests . && docker run --network dagger-developer-perspective_service -e "ENDPOINT=service:80" --rm --name tests tests
     - name: Tear down
@@ -309,11 +309,11 @@ In this CI workflow we are:
 1. Building the `base` image that we can then use to run our tests
 2. Using the `base` image to run our tests
 3. Starting the service and database with docker-compose
-4. Running a script that checks the health of the service so that we run our integration tests once the service is up
+4. Running a script that checks the health of the service so that we run our end to end tests once the service is up
 5. Building the container image for our tests and running them in the same network as the service
 6. Tearing down our service and database
 
-You can see that we added a new step that previously was done manually: service healthcheck. This is so that the integration tests only run once the service is ready:
+You can see that we added a new step that previously was done manually: service healthcheck. This is so that the tests only run once the service is ready:
 ```bash
 #!/bin/bash
 
@@ -340,9 +340,9 @@ Now we can push our branch, create a pull request and see that our CI workflow i
 
 There were quite a few things we had to build in order to make this happen, and they were all a bit scattered:
 * A `Dockerfile` for the service
-* A `Dockerfile` for the integration tests
+* A `Dockerfile` for the end to end tests
 * A `docker-compose.yaml` to run the services in a reproducible way
-* A `check_health.sh` to check the health of the service before running our integration tests
+* A `check_health.sh` to check the health of the service before running our tests
 * The `.github/workflows/pr.yaml` that glues everything together.
 
 ![image showing the contents of the files that were written in this blog post](/images/docker-compose-overview.png)
@@ -465,7 +465,7 @@ func (m *GradleService) BuildRuntime(ctx context.Context) *Container {
 
 You can see that from `BuildRuntime` we are calling the `Build` function defined previously. We then generate a new container that starts from `amazoncorretto:21.0.1-alpine3.18` and mounts the application `jar` found in the container returned by build.
 
-So far we've only done `Build`, `BuildRuntime` and `Test`. But we also want to run integration tests and have everything integrated into Dagger. To do this we need a way to run the service and a MySQL server. Well, we are in luck. Dagger has native support for `Services`. With Dagger, we can define a container as a service and then use the `dagger up` command to start the service and its dependencies. All we have to do is write functions that return the `*Service` type:
+So far we've only done `Build`, `BuildRuntime` and `Test`. But we also want to run end to end tests and have everything integrated into Dagger. To do this we need a way to run the service and a MySQL server. Well, we are in luck. Dagger has native support for `Services`. With Dagger, we can define a container as a service and then use the `dagger up` command to start the service and its dependencies. All we have to do is write functions that return the `*Service` type:
 ```go
 func (m *GradleService) Service(ctx context.Context, sqlInitDB *File) *Service {
 	runtime := m.BuildRuntime(ctx)
@@ -501,7 +501,7 @@ Now we can use the `up` command to start the service and its dependencies locall
 
 Dagger makes sure that the services are healthy before they connect to each other. All this runs in containers isolated in their own environments. This means that we can run this same command in other machines and expect it will work correctly.
 
-To run the integration tests using Dagger we can choose one of two approaches: i) containerize the execution of integration tests and define it as a service connected to the others; ii) take advantage that tests are written in Go and simply call out to them as a library. Implementing the first one is quite straightfoward, we simply define a new function that uses the `Go` module from the Daggerverse and creates a container that is connected to the service:
+To run the end to end tests using Dagger we can choose one of two approaches: i) containerize the execution of the tests and define it as a service connected to the others; ii) take advantage that tests are written in Go and simply call out to them as a library. Implementing the first one is quite straightfoward, we simply define a new function that uses the `Go` module from the Daggerverse and creates a container that is connected to the service:
 ```go
 func (m *GradleService) IntegrationTests(ctx context.Context, tests *Directory, sqlInitDB *File) (string, error) {
 	return dag.Go().
@@ -514,7 +514,7 @@ func (m *GradleService) IntegrationTests(ctx context.Context, tests *Directory, 
 }
 ```
 
-In this function we expect to receive the directory that holds the tests, the database file used to seed the db and we return the output that the command generates. We can now use dagger's CLI to call this function and run the integration tests, all containerized and defined within a single codebase:
+In this function we expect to receive the directory that holds the tests, the database file used to seed the db and we return the output that the command generates. We can now use dagger's CLI to call this function and run the tests, all containerized and defined within a single codebase:
 
 ![output of dagger showing the tests succeeded](/images/integration-tests-cmd.png)
 
@@ -544,7 +544,7 @@ In this code we are importing the tests as a library, starting the service and t
 
 ![screenshot showing the tests running successfully](/images/integration-tests-integrated.png)
 
-I wanted to show both approaches since you might prefer to write your integration tests using a different language to the one used by your Dagger module. If this is the case, you can use the first approach of containerizing and executing a command there.
+I wanted to show both approaches since you might prefer to write your end to end tests using a different language to the one used by your Dagger module. If this is the case, you can use the first approach of containerizing and executing a command there.
 
 ### Building our CI workflow
 Let's put all of this together in our CI workflow. This is where Dagger shines in my opinion. We don't have to do anything special to make sure this works in our CI environment. We just need to install the dagger CLI and run the exact same command developers run locally:
@@ -568,7 +568,7 @@ jobs:
         run: cd /usr/local && { curl -L https://dl.dagger.io/dagger/install.sh | sh; cd -; }
       - name: Test
         run: dagger -m ./ci call with-source --src "." test
-      - name: Integration test
+      - name: End to end tests
         run: dagger -m ./ci call with-source --src "." integration-tests --tests "./tests" --sql-init-db "./db/db.sql"
 ```
 

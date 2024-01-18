@@ -2,10 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://blog.matiaspan.dev/categories/</loc>
-    <lastmod>2023-11-19T00:00:00-03:00</lastmod>
-  </url><url>
     <loc>https://blog.matiaspan.dev/tags/dagger/</loc>
+    <lastmod>2024-01-18T16:00:00-03:00</lastmod>
+  </url><url>
+    <loc>https://blog.matiaspan.dev/</loc>
+    <lastmod>2024-01-18T16:00:00-03:00</lastmod>
+  </url><url>
+    <loc>https://blog.matiaspan.dev/posts/</loc>
+    <lastmod>2024-01-18T16:00:00-03:00</lastmod>
+  </url><url>
+    <loc>https://blog.matiaspan.dev/tags/</loc>
+    <lastmod>2024-01-18T16:00:00-03:00</lastmod>
+  </url><url>
+    <loc>https://blog.matiaspan.dev/posts/why-i-joined-dagger/</loc>
+    <lastmod>2024-01-18T16:00:00-03:00</lastmod>
+  </url><url>
+    <loc>https://blog.matiaspan.dev/categories/</loc>
     <lastmod>2023-11-19T00:00:00-03:00</lastmod>
   </url><url>
     <loc>https://blog.matiaspan.dev/posts/exploring-dagger-streamlining-ci-cd-pipelines-with-code/</loc>
@@ -18,15 +30,6 @@
     <lastmod>2023-11-19T00:00:00-03:00</lastmod>
   </url><url>
     <loc>https://blog.matiaspan.dev/categories/infrastructure/</loc>
-    <lastmod>2023-11-19T00:00:00-03:00</lastmod>
-  </url><url>
-    <loc>https://blog.matiaspan.dev/</loc>
-    <lastmod>2023-11-19T00:00:00-03:00</lastmod>
-  </url><url>
-    <loc>https://blog.matiaspan.dev/posts/</loc>
-    <lastmod>2023-11-19T00:00:00-03:00</lastmod>
-  </url><url>
-    <loc>https://blog.matiaspan.dev/tags/</loc>
     <lastmod>2023-11-19T00:00:00-03:00</lastmod>
   </url><url>
     <loc>https://blog.matiaspan.dev/tags/aws/</loc>
